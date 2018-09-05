@@ -8,3 +8,6 @@ a {
   flex: 1;
   margin-top: 20px;
 }
+.container.row .nav-link.active {
+  background-color: #2f4f4f;
+}
