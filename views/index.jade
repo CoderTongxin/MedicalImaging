@@ -34,17 +34,25 @@ html
            .row
             .col-2
               #v-pills-tab.nav.flex-column.nav-pills(role='tablist', aria-orientation='vertical')
-                  a#v-pills-home-tab.nav-link.active(data-toggle='pill', href='#v-pills-home', role='tab', aria-controls='v-pills-home', aria-selected='true') Home
+                  a#v-pills-home-tab.nav-link.active(data-toggle='pill', href='#v-pills-home', role='tab', aria-controls='v-pills-home', aria-selected='true') Examination Category
                   a#v-pills-profile-tab.nav-link(data-toggle='pill', href='#v-pills-profile', role='tab', aria-controls='v-pills-profile', aria-selected='false') Profile
                   a#v-pills-messages-tab.nav-link(data-toggle='pill', href='#v-pills-messages', role='tab', aria-controls='v-pills-messages', aria-selected='false') Messages
                   a#v-pills-settings-tab.nav-link(data-toggle='pill', href='#v-pills-settings', role='tab', aria-controls='v-pills-settings', aria-selected='false') Settings
             .col-9
               #v-pills-tabContent.tab-content
                   #v-pills-home.tab-pane.fade.show.active(role='tabpanel', aria-labelledby='v-pills-home-tab')
-                    #piechart_div(style='border: 1px solid #ccc')
+                      #piechart_div(style='border: 1px solid #ccc')
                   #v-pills-profile.tab-pane.fade(role='tabpanel', aria-labelledby='v-pills-profile-tab')
                       #barchart_div(style='border: 1px solid #ccc')
-                  #v-pills-messages.tab-pane.fade(role='tabpanel', aria-labelledby='v-pills-messages-tab') ...
+                  #v-pills-messages.tab-pane.fade(role='tabpanel', aria-labelledby='v-pills-messages-tab')
+                      .container
+                          h2 Examination Log
+
+                          table#examinationInfo.table.table-bordered
+                              thead
+                                  tr#examinationInfoHead
+                              tbody#examinationInfoBody
+
                   #v-pills-settings.tab-pane.fade(role='tabpanel', aria-labelledby='v-pills-settings-tab') ...
 
 
@@ -112,20 +120,38 @@ html
 
               }
           }
+          // count appearance
 
-          function drawChart() {
+          function getChartData(arr) {
+              var a = [], b = [], prev;
+
+              //arr.sort();
+              for (var i = 0; i < arr.length; i++) {
+                  if (arr[i] !== prev) {
+                      a.push(arr[i]);
+                      b.push(1);
+                  } else {
+                      b[b.length - 1]++;
+                  }
+                  prev = arr[i];
+              }
+
+              var chartData=[]
+              for(var j = 0; j < a.length; j++){
+                  chartData.push([a[j],b[j]])
+              }
+
+              return chartData;
+          }
+
+          function drawChart(result) {
+              var chartData=getChartData(result);
               var data = new google.visualization.DataTable();
               data.addColumn('string', 'Examination Category');
               data.addColumn('number', 'count');
-              data.addRows([
-                  ['Mushrooms', 3],
-                  ['Onions', 1],
-                  ['Olives', 1],
-                  ['Zucchini', 1],
-                  ['Pepperoni', 2]
-              ]);
+              data.addRows(chartData);
               var piechart_options = {
-                  title: 'Pie Chart: How Much Pizza I Ate Last Night',
+                  title: 'Examination Category',
                   width: 600,
                   height: 400
               };
@@ -139,6 +165,32 @@ html
               };
               var barchart = new google.visualization.BarChart(document.getElementById('barchart_div'));
               barchart.draw(data, barchart_options);
+          }
+
+          /**
+           *  insert data to the table
+           */
+
+          function insertTable(studentData) {
+
+                var tblh = document.getElementById('examinationInfoHead');
+                var tblb = document.getElementById('examinationInfoBody')
+
+              // for (var i = 0; i < studentData.length; i++) {
+              //
+              //     for (var j = 0; j < studentData[0].length; j++) {
+              //         if(i=0){
+              //             var tdh = tblh.insertCell();
+              //             tdh.innerHTML=studentData[i][j]
+              //         }else {
+              //             var tr = tblb.insertRow();
+              //             var tdb = tr.insertCell();
+              //             tdb.innerHTML = studentData[i][j];
+              //         }
+              //
+              //     }
+              // }
+
           }
           /**
            *  Sign in the user upon button click.
@@ -160,7 +212,7 @@ html
            */
           function appendPre(message) {
               var pre = document.getElementById('content');
-              var textContent = document.createTextNode(message + '\\n');
+              var textContent = document.createTextNode(message +'   ');
               pre.appendChild(textContent);
           }
           /**
@@ -169,16 +221,21 @@ html
           function getSheet(fileID) {
               gapi.client.sheets.spreadsheets.values.get({
                   spreadsheetId: fileID,
-                  range: 'A2:B2'
+                  range: 'Examination Log'//'Examination Log!D2:E'
               }).then(function (response) {
                   var range = response.result;
+
+                   insertTable(range.values)
+                  var result=[];
                   if (range.values.length > 0) {
-                      appendPre('Name, Major:');
+                      appendPre('Examination Category:');
                       for (i = 0; i < range.values.length; i++) {
                           var row = range.values[i];
-                          // Print columns A and E, which correspond to indices 0 and 4.
-                          appendPre(row[0] + ', ' + row[1]);
+
+                          result.push(row[0])
+
                       }
+                      drawChart(result);
                   } else {
                       appendPre('No data found.');
                   }
