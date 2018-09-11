@@ -45,15 +45,10 @@ html
                   #v-pills-profile.tab-pane.fade(role='tabpanel', aria-labelledby='v-pills-profile-tab')
                       #barchart_div(style='border: 1px solid #ccc')
                   #v-pills-messages.tab-pane.fade(role='tabpanel', aria-labelledby='v-pills-messages-tab')
-                      .container
-                          h2 Examination Log
+                      iframe(src='https://drive.google.com/embeddedfolderview?id=1bAXEIPNK6Yv5GTy_dARepgmIpw7uPGnO#list', style='width:100%; height:600px; border:0;')
+                  #v-pills-settings.tab-pane.fade(role='tabpanel', aria-labelledby='v-pills-settings-tab')
 
-                          table#examinationInfo.table.table-bordered
-                              thead
-                                  tr#examinationInfoHead
-                              tbody#examinationInfoBody
 
-                  #v-pills-settings.tab-pane.fade(role='tabpanel', aria-labelledby='v-pills-settings-tab') ...
 
 
 
@@ -65,7 +60,7 @@ html
           var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest","https://sheets.googleapis.com/$discovery/rest?version=v4"];
           // Authorization scopes required by the API; multiple scopes can be
           // included, separated by spaces.
-          var SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
+          var SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
 
 
           var authorizeButton = document.getElementById('authorize_button');
@@ -108,12 +103,12 @@ html
                   signoutButton.style.display = 'block';
                   var email=googleAuth.currentUser.get().getBasicProfile().getEmail();
                   var upiResp = email.split("@")[0];
-                  console.log(upiResp);
+
                   // Load Charts and the corechart and barchart packages.
                   google.charts.load('current', {'packages': ['corechart']});
                   // Draw the pie chart and bar chart when Charts is loaded.
-                  google.charts.setOnLoadCallback(drawChart);
-                  listFiles(upiResp);
+                  google.charts.setOnLoadCallback(listFiles(upiResp));
+
               } else {
                   authorizeButton.style.display = 'block';
                   signoutButton.style.display = 'none';
@@ -125,7 +120,6 @@ html
           function getChartData(arr) {
               var a = [], b = [], prev;
 
-              //arr.sort();
               for (var i = 0; i < arr.length; i++) {
                   if (arr[i] !== prev) {
                       a.push(arr[i]);
@@ -145,6 +139,7 @@ html
           }
 
           function drawChart(result) {
+
               var chartData=getChartData(result);
               var data = new google.visualization.DataTable();
               data.addColumn('string', 'Examination Category');
@@ -218,13 +213,13 @@ html
           /**
            * get sheet data.
            */
-          function getSheet(fileID) {
+          function getExaminationLogSheet(fileID) {
               gapi.client.sheets.spreadsheets.values.get({
                   spreadsheetId: fileID,
-                  range: 'Examination Log'//'Examination Log!D2:E'
+                  range: 'Examination Log!D2:E'//'Examination Log!D2:E'
               }).then(function (response) {
                   var range = response.result;
-
+                    console.log(range);
                    insertTable(range.values)
                   var result=[];
                   if (range.values.length > 0) {
@@ -243,10 +238,30 @@ html
                   appendPre('Error: ' + response.result.error.message);
               });
           }
+
+          function getSheet(fileID){
+
+              gapi.client.drive.files.get({
+                  fileId: fileID,
+                  fields: 'webViewLink'
+              }).then(function (response) {
+
+                 console.log(typeof JSON.parse(response.body))
+                  //document.getElementById('sheetIframe').src = JSON.parse(response.body).webViewLink+"?widget=true&amp;headers=false";
+                  document.getElementById('v-pills-settings').innerHTML= "<iframe src='https://docs.google.com/spreadsheets/d/e/2PACX-1vR_IY-aLNX7C3zEYX6j25TsjJ7OektqrnMHTYTxPoZ2VMYn-lONPP2Y31hG5_UV2-gTEyAM4LNmjlLK/pubhtml?widget=true&amp;headers=false'></iframe>"
+                  //document.getElementById('v-pills-messages').innerHTML="<iframe src='https://drive.google.com/embeddedfolderview?id=1R6dM4Wx7StnmSkQD0yu8iWRTF1UA5Lq-#list' style='width:100%; height:600px; border:0;'></iframe>"
+
+              }, function (response) {
+                  appendPre('Error: ' + response.result.error.message);
+              });
+
+          }
+
           /**
            * Print files.
            */
           function listFiles(upiResp) {
+
               var fileName='Clinical Log Book('+upiResp+') Test'
               gapi.client.drive.files.list({
                   q:"name='"+fileName+"'",
@@ -255,11 +270,17 @@ html
                   var files = response.result.files;
                   if (files) {
                       var file=files[0];
-                      getSheet(file.id)
+                      console.log(file)
+                      getSheet(file.id);
+                      getExaminationLogSheet(file.id)
+
                   } else {
                       appendPre('No files found.');
                   }
               });
+
+
+
           }
 
       script(async='', defer='', src='https://apis.google.com/js/api.js', onload='this.onload=function(){};handleClientLoad()', onreadystatechange="if (this.readyState === 'complete') this.onload()")
