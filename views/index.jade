@@ -20,16 +20,17 @@ html
                           | Home
                           span.sr-only (current)
                   li.nav-item
-                      a.nav-link(href='#') Features
+                      a.nav-link(href='users') Features
                   li.nav-item
                       a.nav-link(href='#') Pricing
               span.navbar-text
-                  | User
-      p Drive API Quickstart
-      // Add buttons to initiate auth sequence and sign out
-      button#authorize_button(style='display: none;') Authorize
-      button#signout_button(style='display: none;') Sign Out
+                  button#authorize_button(style='display: none;') Authorize
+                  button#signout_button(style='display: none;') Sign Out
+
+
+
       pre#content.
+
       .container#charts_container
            .row
             .col-2
@@ -45,9 +46,9 @@ html
                   #v-pills-profile.tab-pane.fade(role='tabpanel', aria-labelledby='v-pills-profile-tab')
                       #barchart_div(style='border: 1px solid #ccc')
                   #v-pills-messages.tab-pane.fade(role='tabpanel', aria-labelledby='v-pills-messages-tab')
-                      iframe(src='https://drive.google.com/embeddedfolderview?id=1bAXEIPNK6Yv5GTy_dARepgmIpw7uPGnO#list', style='width:100%; height:600px; border:0;')
+                      //iframe(src='https://drive.google.com/embeddedfolderview?id=1bAXEIPNK6Yv5GTy_dARepgmIpw7uPGnO#list', style='width:100%; height:600px; border:0;')
                   #v-pills-settings.tab-pane.fade(role='tabpanel', aria-labelledby='v-pills-settings-tab')
-
+                      iframe#sheetIframe
 
 
 
@@ -246,9 +247,8 @@ html
                   fields: 'webViewLink'
               }).then(function (response) {
 
-                 console.log(typeof JSON.parse(response.body))
-                  //document.getElementById('sheetIframe').src = JSON.parse(response.body).webViewLink+"?widget=true&amp;headers=false";
-                  document.getElementById('v-pills-settings').innerHTML= "<iframe src='https://docs.google.com/spreadsheets/d/e/2PACX-1vR_IY-aLNX7C3zEYX6j25TsjJ7OektqrnMHTYTxPoZ2VMYn-lONPP2Y31hG5_UV2-gTEyAM4LNmjlLK/pubhtml?widget=true&amp;headers=false'></iframe>"
+                  document.getElementById('sheetIframe').src = JSON.parse(response.body).webViewLink.replace('edit','preview');
+                  //document.getElementById('v-pills-settings').innerHTML= "<iframe src='https://docs.google.com/spreadsheets/d/e/2PACX-1vR_IY-aLNX7C3zEYX6j25TsjJ7OektqrnMHTYTxPoZ2VMYn-lONPP2Y31hG5_UV2-gTEyAM4LNmjlLK/pubhtml?widget=true&amp;headers=false'></iframe>"
                   //document.getElementById('v-pills-messages').innerHTML="<iframe src='https://drive.google.com/embeddedfolderview?id=1R6dM4Wx7StnmSkQD0yu8iWRTF1UA5Lq-#list' style='width:100%; height:600px; border:0;'></iframe>"
 
               }, function (response) {
