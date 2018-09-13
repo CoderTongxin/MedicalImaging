@@ -5,10 +5,9 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const stylus = require('stylus');
 
-
-
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const examinationLogRouter = require('./routes/examinationLog');
+
 
 const app = express();
 
@@ -24,7 +23,7 @@ app.use(stylus.middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/examinationLog', examinationLogRouter);
 
 
 // catch 404 and forward to error handler

@@ -1,0 +1,25 @@
+extends layout
+
+block content
+
+    pre#content.
+
+    .container#charts_container
+        .row
+            .col-2
+                #v-pills-tab.nav.flex-column.nav-pills(role='tablist', aria-orientation='vertical')
+                    a#v-pills-home-tab.nav-link.active(data-toggle='pill', href='#v-pills-home', role='tab', aria-controls='v-pills-home', aria-selected='true') Examination Category
+                    a#v-pills-profile-tab.nav-link(data-toggle='pill', href='#v-pills-profile', role='tab', aria-controls='v-pills-profile', aria-selected='false') Profile
+                    a#v-pills-messages-tab.nav-link(data-toggle='pill', href='#v-pills-messages', role='tab', aria-controls='v-pills-messages', aria-selected='false') Messages
+                    a#v-pills-settings-tab.nav-link(data-toggle='pill', href='#v-pills-settings', role='tab', aria-controls='v-pills-settings', aria-selected='false') Settings
+            .col-9
+                #v-pills-tabContent.tab-content
+                    #v-pills-home.tab-pane.fade.show.active(role='tabpanel', aria-labelledby='v-pills-home-tab')
+                        #piechart_div(style='border: 1px solid #ccc')
+                    #v-pills-profile.tab-pane.fade(role='tabpanel', aria-labelledby='v-pills-profile-tab')
+                        #barchart_div(style='border: 1px solid #ccc')
+                    #v-pills-messages.tab-pane.fade(role='tabpanel', aria-labelledby='v-pills-messages-tab')
+                        //iframe(src='https://drive.google.com/embeddedfolderview?id=1bAXEIPNK6Yv5GTy_dARepgmIpw7uPGnO#list', style='width:100%; height:600px; border:0;')
+                    #v-pills-settings.tab-pane.fade(role='tabpanel', aria-labelledby='v-pills-settings-tab')
+                        iframe#sheetIframe
+
