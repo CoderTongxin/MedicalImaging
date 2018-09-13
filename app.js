@@ -23,7 +23,7 @@ app.use(stylus.middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/examinationLog',indexRouter);
+app.use('/clinicalExaminations',indexRouter);
 
 
 

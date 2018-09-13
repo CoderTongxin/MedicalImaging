@@ -8,8 +8,8 @@ router.get('/', function(req, res, next) {
   res.render('index');
 });
 
-router.get('/examinationLog', function(req, res, next) {
-    res.send('examinationLog');
+router.get('/clinicalExaminations', function(req, res, next) {
+    res.render('clinicalExaminations');
 });
 
 module.exports = router;

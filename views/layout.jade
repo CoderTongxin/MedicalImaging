@@ -20,13 +20,13 @@ html
                   | Home
                   span.sr-only (current)
               li.nav-item
-                a.nav-link(href='/examinationLog') Clinical Examinations
+                a.nav-link(href='/clinicalExaminations') Clinical Examinations
               li.nav-item
-                a.nav-link(href='/error') Clinical Hours
+                a.nav-link(href='/clinicalHours') Clinical Hours
               li.nav-item
-                a.nav-link(href='') LEP Assessments
+                a.nav-link(href='/lepAssessments') LEP Assessments
               li.nav-item
-                a.nav-link(href='') Clinical Summary
+                a.nav-link(href='clinicalSummary') Clinical Summary
 
             span.navbar-text
               button#authorize_button(style='display: none;') Authorize
@@ -89,7 +89,10 @@ html
                 // Load Charts and the corechart and barchart packages.
                 google.charts.load('current', {'packages': ['corechart']});
                 // Draw the pie chart and bar chart when Charts is loaded.
-                google.charts.setOnLoadCallback(listFiles(upiResp));
+                if(document.getElementById('charts_container')){
+                    google.charts.setOnLoadCallback(listClinicalLogBook(upiResp));
+                }
+
 
             } else {
                 authorizeButton.style.display = 'block';
@@ -144,31 +147,8 @@ html
             barchart.draw(data, barchart_options);
         }
 
-        /**
-         *  insert data to the table
-         */
 
-        function insertTable(studentData) {
 
-            var tblh = document.getElementById('examinationInfoHead');
-            var tblb = document.getElementById('examinationInfoBody')
-
-            // for (var i = 0; i < studentData.length; i++) {
-            //
-            //     for (var j = 0; j < studentData[0].length; j++) {
-            //         if(i=0){
-            //             var tdh = tblh.insertCell();
-            //             tdh.innerHTML=studentData[i][j]
-            //         }else {
-            //             var tr = tblb.insertRow();
-            //             var tdb = tr.insertCell();
-            //             tdb.innerHTML = studentData[i][j];
-            //         }
-            //
-            //     }
-            // }
-
-        }
         /**
          *  Sign in the user upon button click.
          */
@@ -202,7 +182,7 @@ html
             }).then(function (response) {
                 var range = response.result;
                 console.log(range);
-                insertTable(range.values)
+
                 var result = [];
                 if (range.values.length > 0) {
                     appendPre('Examination Category:');
@@ -241,7 +221,7 @@ html
         /**
          * Print files.
          */
-        function listFiles(upiResp) {
+        function listClinicalLogBook(upiResp) {
 
             var fileName = 'Clinical Log Book(' + upiResp + ') Test'
             gapi.client.drive.files.list({
