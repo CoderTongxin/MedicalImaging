@@ -11,26 +11,33 @@ html
     body
         nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
           a.navbar-brand(href='/') Medical Imaging
-          button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarText', aria-controls='navbarText', aria-expanded='false', aria-label='Toggle navigation')
+          button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNavDropdown', aria-controls='navbarNavDropdown', aria-expanded='false', aria-label='Toggle navigation')
             span.navbar-toggler-icon
-          #navbarText.collapse.navbar-collapse
+          #navbarNavDropdown.collapse.navbar-collapse
             ul.navbar-nav.mr-auto
-              li.nav-item.active
-                a.nav-link(href='/')
-                  | Home
-                  span.sr-only (current)
-              li.nav-item
-                a.nav-link(href='/clinicalExaminations') Clinical Examinations
-              li.nav-item
-                a.nav-link(href='/clinicalHours') Clinical Hours
+
+              li.nav-item.dropdown
+                  a#navbarDropdownMenuClinicalExaminations.nav-link.dropdown-toggle(href='/', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                      | Clinical Examinations
+                  .dropdown-menu(aria-labelledby='navbarDropdownMenuClinicalExaminations')
+                      a.dropdown-item(href='/clinicalExaminations') Total
+                      a.dropdown-item(href='#') Category
+                      a.dropdown-item(href='#') Sub-category
+              li.nav-item.dropdown
+                  a#navbarDropdownMenuClinicalHours.nav-link.dropdown-toggle(href='/clinicalHours', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                      | Clinical Hours
+                  .dropdown-menu(aria-labelledby='navbarDropdownMenuClinicalHours')
+                      a.dropdown-item(href='#') Total
+                      a.dropdown-item(href='#') Category
+                      a.dropdown-item(href='#') Sub-category
               li.nav-item
                 a.nav-link(href='/lepAssessments') LEP Assessments
               li.nav-item
-                a.nav-link(href='clinicalSummary') Clinical Summary
+                a.nav-link(href='/clinicalSummary') Clinical Summary
 
             span.navbar-text
-              button#authorize_button(style='display: none;') Authorize
-              button#signout_button(style='display: none;') Sign Out
+              #authorize_button(style='display: none;') Authorize
+              #signout_button(style='display: none;') Sign Out
 
         block content
 
@@ -89,7 +96,7 @@ html
                 // Load Charts and the corechart and barchart packages.
                 google.charts.load('current', {'packages': ['corechart']});
                 // Draw the pie chart and bar chart when Charts is loaded.
-                if(document.getElementById('charts_container')){
+                if(document.getElementById('clinicalExaminationContainer')){
                     google.charts.setOnLoadCallback(listClinicalLogBook(upiResp));
                 }
 
