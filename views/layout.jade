@@ -16,16 +16,16 @@ html
           #navbarNavDropdown.collapse.navbar-collapse
             ul.navbar-nav.mr-auto
               li.nav-item
-                  a.nav-link(href='/clinicalExaminations') Clinical Log Book
+                  a.nav-link(href='/clinicalLogBook') Clinical Log Book
               li.nav-item.dropdown
-                  a#navbarDropdownMenuClinicalExaminations.nav-link.dropdown-toggle(href='/clinicalExaminations', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                  a#navbarDropdownMenuClinicalExaminations.nav-link.dropdown-toggle(href='/', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
                       | Clinical Examinations
                   .dropdown-menu(aria-labelledby='navbarDropdownMenuClinicalExaminations')
-                      a.dropdown-item(href='/clinicalExaminations') Total
+                      a.dropdown-item(href='/clinicalExaminations/total') Total
                       a.dropdown-item(href='#') Category
                       a.dropdown-item(href='#') Sub-category
               li.nav-item.dropdown
-                  a#navbarDropdownMenuClinicalHours.nav-link.dropdown-toggle(href='/clinicalHours', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                  a#navbarDropdownMenuClinicalHours.nav-link.dropdown-toggle(href='/', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
                       | Clinical Hours
                   .dropdown-menu(aria-labelledby='navbarDropdownMenuClinicalHours')
                       a.dropdown-item(href='#') Total
@@ -97,9 +97,11 @@ html
                 // Load Charts and the corechart and barchart packages.
                 google.charts.load('current', {'packages': ['corechart']});
                 // Draw the pie chart and bar chart when Charts is loaded.
-
-                if(document.getElementById('clinicalExaminationContainer'||document.getElementById('clinicalHoursContainer'))){
+                if(document.getElementById('clinicalLogBookContainer')){
                     google.charts.setOnLoadCallback(listClinicalLogBook(upiResp));
+                }
+                if(document.getElementById('clinicalExaminationContainer'||document.getElementById('clinicalHoursContainer'))){
+
                 }
 
 

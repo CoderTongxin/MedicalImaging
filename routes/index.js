@@ -8,6 +8,12 @@ router.get('/', function(req, res, next) {
   res.render('index');
 });
 
+
+router.get('/clinicalLogBook', function(req, res, next) {
+    res.render('clinicalLogBook');
+});
+
+
 router.get('/clinicalExaminations', function(req, res, next) {
     res.render('clinicalExaminations');
 });
