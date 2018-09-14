@@ -15,9 +15,10 @@ html
             span.navbar-toggler-icon
           #navbarNavDropdown.collapse.navbar-collapse
             ul.navbar-nav.mr-auto
-
+              li.nav-item
+                  a.nav-link(href='/clinicalExaminations') Clinical Log Book
               li.nav-item.dropdown
-                  a#navbarDropdownMenuClinicalExaminations.nav-link.dropdown-toggle(href='/', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                  a#navbarDropdownMenuClinicalExaminations.nav-link.dropdown-toggle(href='/clinicalExaminations', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
                       | Clinical Examinations
                   .dropdown-menu(aria-labelledby='navbarDropdownMenuClinicalExaminations')
                       a.dropdown-item(href='/clinicalExaminations') Total
@@ -96,8 +97,18 @@ html
                 // Load Charts and the corechart and barchart packages.
                 google.charts.load('current', {'packages': ['corechart']});
                 // Draw the pie chart and bar chart when Charts is loaded.
-                if(document.getElementById('clinicalExaminationContainer')){
+
+                if(document.getElementById('clinicalExaminationContainer'||document.getElementById('clinicalHoursContainer'))){
                     google.charts.setOnLoadCallback(listClinicalLogBook(upiResp));
+                }
+
+
+                if (document.getElementById('lepAssessmentsContainer')) {
+
+                }
+
+                if(document.getElementById('clinicalSummaryContainer')){
+
                 }
 
 
@@ -130,6 +141,9 @@ html
             return chartData;
         }
 
+
+
+
         function drawChart(result) {
 
             var chartData = getChartData(result);
@@ -144,6 +158,7 @@ html
             };
             var piechart = new google.visualization.PieChart(document.getElementById('piechart_div'));
             piechart.draw(data, piechart_options);
+
             var barchart_options = {
                 title: 'Barchart: How Much Pizza I Ate Last Night',
                 width: 600,
@@ -168,19 +183,9 @@ html
         function handleSignoutClick(event) {
             gapi.auth2.getAuthInstance().signOut();
         }
+
         /**
-         * Append a pre element to the body containing the given message
-         * as its text node. Used to display the results of the API call.
-         *
-         * @param {string} message Text to be placed in pre element.
-         */
-        function appendPre(message) {
-            var pre = document.getElementById('content');
-            var textContent = document.createTextNode(message + '   ');
-            pre.appendChild(textContent);
-        }
-        /**
-         * get sheet data.
+         * get clinicalExaminationLogSheet data.
          */
         function getExaminationLogSheet(fileID) {
             gapi.client.sheets.spreadsheets.values.get({
@@ -188,11 +193,10 @@ html
                 range: 'Examination Log!D2:E'//'Examination Log!D2:E'
             }).then(function (response) {
                 var range = response.result;
-                console.log(range);
 
                 var result = [];
                 if (range.values.length > 0) {
-                    appendPre('Examination Category:');
+
                     for (i = 0; i < range.values.length; i++) {
                         var row = range.values[i];
 
@@ -201,10 +205,39 @@ html
                     }
                     drawChart(result);
                 } else {
-                    appendPre('No data found.');
+                    //appendPre('No data found.');
                 }
             }, function (response) {
-                appendPre('Error: ' + response.result.error.message);
+                //appendPre('Error: ' + response.result.error.message);
+            });
+        }
+
+        /**
+        * get clinicalHourLogSheet data.
+        */
+        function getHourLogSheet(fileID) {
+            gapi.client.sheets.spreadsheets.values.get({
+                spreadsheetId: fileID,
+                range: 'Examination Hours Log!B2:E'//'Examination Log!D2:E'
+            }).then(function (response) {
+                var range = response.result;
+                console.log(range);
+
+                var result = [];
+                if (range.values.length > 0) {
+
+                    for (i = 0; i < range.values.length; i++) {
+                        var row = range.values[i];
+
+                        result.push(row[0])
+
+                    }
+                    drawChart(result);
+                } else {
+                    //appendPre('No data found.');
+                }
+            }, function (response) {
+                //appendPre('Error: ' + response.result.error.message);
             });
         }
 
@@ -216,17 +249,15 @@ html
             }).then(function (response) {
 
                 document.getElementById('sheetIframe').src = JSON.parse(response.body).webViewLink.replace('edit', 'preview');
-                //document.getElementById('v-pills-settings').innerHTML= "<iframe src='https://docs.google.com/spreadsheets/d/e/2PACX-1vR_IY-aLNX7C3zEYX6j25TsjJ7OektqrnMHTYTxPoZ2VMYn-lONPP2Y31hG5_UV2-gTEyAM4LNmjlLK/pubhtml?widget=true&amp;headers=false'></iframe>"
-                //document.getElementById('v-pills-messages').innerHTML="<iframe src='https://drive.google.com/embeddedfolderview?id=1R6dM4Wx7StnmSkQD0yu8iWRTF1UA5Lq-#list' style='width:100%; height:600px; border:0;'></iframe>"
 
             }, function (response) {
-                appendPre('Error: ' + response.result.error.message);
+                //appendPre('Error: ' + response.result.error.message);
             });
 
         }
 
         /**
-         * Print files.
+         * get clinical log book.
          */
         function listClinicalLogBook(upiResp) {
 
@@ -237,13 +268,15 @@ html
             }).then(function (response) {
                 var files = response.result.files;
                 if (files) {
+
                     var file = files[0];
-                    console.log(file)
+
+                    //load the sheet
                     getSheet(file.id);
                     getExaminationLogSheet(file.id)
 
                 } else {
-                    appendPre('No files found.');
+                    //appendPre('No files found.');
                 }
             });
 
