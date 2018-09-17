@@ -98,15 +98,15 @@ html
                 google.charts.load('current', {'packages': ['corechart']});
                 // Draw the pie chart and bar chart when Charts is loaded.
                 if(document.getElementById('clinicalLogBookContainer')){
-                    google.charts.setOnLoadCallback(listClinicalLogBook(upiResp));
+                   listClinicalLogBook(upiResp);
                 }
                 if(document.getElementById('clinicalExaminationContainer'||document.getElementById('clinicalHoursContainer'))){
-
+                       google.charts.setOnLoadCallback(listClinicalLogBook(upiResp));
                 }
 
 
                 if (document.getElementById('lepAssessmentsContainer')) {
-
+                       google.charts.setOnLoadCallback(listLepAssessments(upiResp));
                 }
 
                 if(document.getElementById('clinicalSummaryContainer')){
@@ -243,14 +243,21 @@ html
             });
         }
 
-        function getSheet(fileID) {
+        function getClinicalLogBookLink(fileID) {
 
             gapi.client.drive.files.get({
                 fileId: fileID,
                 fields: 'webViewLink'
             }).then(function (response) {
-
-                document.getElementById('sheetIframe').src = JSON.parse(response.body).webViewLink.replace('edit', 'preview');
+                var sheetIframe =document.getElementById('sheetIframe');
+                // sheetIframe.addEventListener("load", function() {
+                //     var cssLink = document.createElement("link");
+                //     cssLink.href = "/stylesheets/style.css";
+                //     cssLink.rel = "stylesheet";
+                //     cssLink.type = "text/css";
+                //     frames['sheetIframe'].document.head.appendChild(cssLink);
+                // });
+                sheetIframe.src = JSON.parse(response.body).webViewLink.replace('edit', 'preview');
 
             }, function (response) {
                 //appendPre('Error: ' + response.result.error.message);
@@ -274,16 +281,40 @@ html
                     var file = files[0];
 
                     //load the sheet
-                    getSheet(file.id);
+                    getClinicalLogBookLink(file.id);
                     getExaminationLogSheet(file.id)
 
                 } else {
                     //appendPre('No files found.');
                 }
             });
-
-
         }
+
+        /**
+         * get clinical log book.
+         */
+        function listLepAssessments(upiResp) {
+
+            var fileName = 'Clinical Log Book(' + upiResp + ') Test'
+            gapi.client.drive.files.list({
+                q: "name='" + fileName + "'",
+                'name': "nextPageToken, files(id, name)"
+            }).then(function (response) {
+                var files = response.result.files;
+                if (files) {
+
+                    var file = files[0];
+
+                    //load the sheet
+                    getClinicalLogBookLink(file.id);
+                    getExaminationLogSheet(file.id)
+
+                } else {
+                    //appendPre('No files found.');
+                }
+            });
+        }
+
 
     script(async='', defer='', src='https://apis.google.com/js/api.js', onload='this.onload=function(){};handleClientLoad()', onreadystatechange="if (this.readyState === 'complete') this.onload()")
     script(src='https://code.jquery.com/jquery-3.0.0.min.js')
