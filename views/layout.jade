@@ -146,8 +146,10 @@ html
             }
 
             var chartData = []
-            chartData.push(a);
-            chartData.push(b)
+            for (var j = 0; j < a.length; j++) {
+                chartData.push([a[j], b[j]])
+            }
+
 
             return chartData;
         }
