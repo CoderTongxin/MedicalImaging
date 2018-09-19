@@ -15,25 +15,25 @@ router.get('/clinicalLogBook', function(req, res, next) {
 
 
 router.get('/clinicalExaminationsTotal', function(req, res, next) {
-    res.render('clinicalExaminations',{type:'total'});
+    res.render('clinicalExaminations',{type:'clinicalExaminationsTotal'});
 });
 
 router.get('/clinicalExaminationsCategory', function(req, res, next) {
-    res.render('clinicalExaminations',{type:'category'});
+    res.render('clinicalExaminations',{type:'clinicalExaminationsCategory'});
 });
 
 router.get('/clinicalExaminationsSubcategory', function(req, res, next) {
-    res.render('clinicalExaminations',{type:'subcategory'});
+    res.render('clinicalExaminations',{type:'clinicalExaminationsSubcategory'});
 });
 
 router.get('/clinicalHoursTotal', function(req, res, next) {
-    res.render('clinicalHours',{type:'total'});
+    res.render('clinicalHours',{type:'clinicalHoursTotal'});
 });
 router.get('/clinicalHoursMonth', function(req, res, next) {
-    res.render('clinicalHours',{type:'month'});
+    res.render('clinicalHours',{type:'clinicalHoursMonth'});
 });
 router.get('/clinicalHoursWeek', function(req, res, next) {
-    res.render('clinicalHours',{type:'week'});
+    res.render('clinicalHours',{type:'clinicalHoursWeek'});
 });
 
 router.get('/clinicalSummary', function(req, res, next) {
