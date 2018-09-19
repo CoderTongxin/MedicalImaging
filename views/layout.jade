@@ -275,7 +275,7 @@ html
             });
         }
 
-        function getExaminationLogSheetCategory(fileID) {
+        function getExaminationLogSheetCategory(fileID,type) {
             gapi.client.sheets.spreadsheets.values.get({
                 spreadsheetId: fileID,
                 range: 'Examination Log!D:E'
@@ -362,7 +362,10 @@ html
                             getExaminationLogSheetTotal(fileID)
                             break
                         case 'clinicalExaminationsCategory':
-                            getExaminationLogSheetCategory(fileID)
+                            getExaminationLogSheetCategory(fileID,"category")
+                            break
+                        case 'clinicalExaminationsSubcategory':
+                            getExaminationLogSheetCategory(fileID,"subcategory")
                             break
                         case 'clinicalHours':
                             break
