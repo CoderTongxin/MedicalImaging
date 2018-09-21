@@ -1,5 +1,7 @@
-body {
+body,
+html {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  height: 100%;
 }
 a {
   color: #00b7ff;
@@ -16,9 +18,10 @@ iframe {
 }
 #clinicalLogBookContainer,
 #clinicalExaminationContainer,
-#clinicalHoursContainer {
+#clinicalHoursContainer,
+#lepAssessmentsContainer {
   margin-top: 100px;
-  height: 1000px;
+  height: 100%;
 }
 #clinicalExaminationsTotal {
   flex: 1;
