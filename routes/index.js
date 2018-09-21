@@ -32,9 +32,10 @@ router.get('/clinicalHoursTotal', function(req, res, next) {
 router.get('/clinicalHoursMonth', function(req, res, next) {
     res.render('clinicalHours',{type:'clinicalHoursMonth'});
 });
-router.get('/clinicalHoursWeek', function(req, res, next) {
-    res.render('clinicalHours',{type:'clinicalHoursWeek'});
-});
+
+// router.get('/clinicalHoursWeek', function(req, res, next) {
+//     res.render('clinicalHours',{type:'clinicalHoursWeek'});
+// });
 
 router.get('/clinicalSummary', function(req, res, next) {
     res.render('clinicalSummary');
