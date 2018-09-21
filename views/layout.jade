@@ -42,7 +42,7 @@ html
         block content
 
         // Footer
-        footer.py-5.bg-black
+        footer.py-4.bg-black
             .container
                 p.m-0.text-center.text-white.small Copyright © Your Website 2018
     script(type='text/javascript').
@@ -303,7 +303,6 @@ html
                             range.values[i][0] = range.values[i][0].split(':')[0]
                         }
                     }
-
                     var chartData = getExaminationCategoryChartData(range.values);
                     drawChart(chartData,type);
                 } else {
@@ -325,7 +324,6 @@ html
                 range: range
             }).then(function (response) {
                  var range = response.result;
-                 console.log(range)
                 if (range.values.length > 0) {
                     var chartData =getClinicalHoursChartData(range.values,type)
                     drawChart(chartData,type);
@@ -346,6 +344,7 @@ html
 
                 var sheetIframe =document.getElementById('sheetIframe');
                 sheetIframe.src = JSON.parse(response.body).webViewLink.replace('edit', 'preview');
+
 
             }, function (response) {
                 //appendPre('Error: ' + response.result.error.message);
@@ -399,18 +398,20 @@ html
         }
 
         /**
-         * get clinical log book.
+         * get clinical lep files.
          */
-        function listLepAssessments(upiResp) {
+        function listLepAssessments() {
 
-            var fileName = 'Clinical Log Book(' + upiResp + ') Test'
+            var fileName = 'Longitudinal Evaluations of Performance (LEPs)'
             gapi.client.drive.files.list({
                 q: "name='" + fileName + "'",
                 'name': "nextPageToken, files(id, name)"
             }).then(function (response) {
                 var files = response.result.files;
                 if (files) {
-                    var file = files[0];
+                    console.log(files);
+                    var sheetIframe = document.getElementById('sheetIframe');
+                    sheetIframe.src= "https://drive.google.com/embeddedfolderview?id="+files[99].id+"#list";
 
                 } else {
                     //appendPre('No files found.');
