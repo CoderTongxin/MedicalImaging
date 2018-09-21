@@ -29,7 +29,7 @@ html
                   .dropdown-menu(aria-labelledby='navbarDropdownMenuClinicalHours')
                       a.dropdown-item(href='/clinicalHoursTotal') Total
                       a.dropdown-item(href='/clinicalHoursMonth') Month
-                      a.dropdown-item(href='/clinicalHoursWeek') Week
+                      //a.dropdown-item(href='/clinicalHoursWeek') Week
               li.nav-item
                 a.nav-link(href='/lepAssessments') LEP Assessments
               li.nav-item
@@ -104,13 +104,10 @@ html
                    getClinicalLogBook(upiResp,'clinicalLogBookLink') ;
                     return;
                 }
-                if(document.getElementById('clinicalExaminationContainer')){
+                if(document.getElementById('clinicalExaminationContainer') || document.getElementById('clinicalHoursContainer')){
+
                        google.charts.setOnLoadCallback(getClinicalLogBook(upiResp,document.getElementsByClassName('chartContainer')[0].id));
                        return;
-                }
-                if(document.getElementById('clinicalHoursContainer')){
-                    google.charts.setOnLoadCallback(getClinicalLogBook(upiResp,'clinicalHours'));
-                    return;
                 }
 
                 if (document.getElementById('lepAssessmentsContainer')) {
@@ -119,7 +116,7 @@ html
                 }
 
                 if(document.getElementById('clinicalSummaryContainer')){
-
+                    google.charts.setOnLoadCallback(listLepAssessments);
                 }
 
 
@@ -130,30 +127,6 @@ html
             }
         }
         // count appearance
-
-        function getChartData(arr) {
-            var a = [], b = [], prev;
-            a.push('Type');
-            b.push('All Examinations')
-            for (var i = 0; i < arr.length; i++) {
-                if (arr[i] !== prev) {
-                    a.push(arr[i]);
-                    b.push(1);
-                } else {
-                    b[b.length - 1]++;
-                }
-                prev = arr[i];
-            }
-
-            var chartData = []
-            for (var j = 0; j < a.length; j++) {
-                chartData.push([a[j], b[j]])
-            }
-
-
-            return chartData;
-        }
-
 
         function getExaminationTotalChartData(arr){
             var a = [], b = [], prev;
@@ -181,10 +154,9 @@ html
 
             arr.sort()
             var prev;
-
             var category=[['Category','Observed','Performed independently','Performed assisted']];
 
-            for (var i = 1; i < arr.length; i++) {
+            for (var i = 0; i < arr.length; i++) {
 
                 if (arr[i][0] !== prev) {
                       if(arr[i][1] === 'Observed'){
@@ -215,25 +187,68 @@ html
         }
 
 
+        function getClinicalHoursChartData(arr,type) {
+            var hoursData=[['Type','Hours']]
+            if(type==='clinicalHoursTotal'){
+                var num=0;
+                for(var i =0; i<arr.length;i++){
+                    num+=Number(arr[i][0])
+                 }
+                hoursData.push(['Total',num])
+            } else {
+                arr.sort()
+                var prev;
+                for (var j = 0; j < arr.length; j++) {
+                    var date=arr[j][0].split('-',2);
+                    var month=date[0]+"-"+date[1];
+                    var hours=Number(arr[j][1])
+                    if(month!==prev){
+                       hoursData.push([month,hours])
+                    }else {
+                        hoursData[hoursData.length-1][1]+=hours;
+                    }
+                    prev=month;
+                }
+            }
+            return hoursData
 
-        function drawExaminationChart(chartData,type) {
+        }
 
+        
+        function drawChart(chartData,type) {
+            var title = getChartTitle(type);
             var data = google.visualization.arrayToDataTable(chartData);
             var ColumnChart_options = {
-                title: 'Examination Category Total',
+                title: title,
                 width: '100%',
                 height: '100%',
                 legend:{position:'top',maxLines:3},
                 isStacked:true
             };
 
-            var piechart = new google.visualization.ColumnChart(document.getElementById(type));
-            piechart.draw(data, ColumnChart_options);
-
+            var columnChart = new google.visualization.ColumnChart(document.getElementById(type));
+            columnChart.draw(data, ColumnChart_options);
 
         }
 
+        function getChartTitle(type){
+            switch (type) {
+                case 'clinicalExaminationsTotal':
+                    return 'Examinations'
+                case 'clinicalExaminationsCategory':
+                    return 'Examinations(by category)'
+                case 'clinicalExaminationsSubcategory':
+                    return 'Examinations(by sub-category)'
+                case 'clinicalHoursTotal':
+                    return 'Total Clinical Hours'
+                case 'clinicalHoursMonth':
+                    return 'Clinical Hours(by Month)'
+                case 'clinicalHoursWeek':
+                    return 'Clinical Hours(by Week)'
 
+            }
+
+        }
 
         /**
          *  Sign in the user upon button click.
@@ -254,7 +269,7 @@ html
         function getExaminationLogSheetTotal(fileID) {
             gapi.client.sheets.spreadsheets.values.get({
                 spreadsheetId: fileID,
-                range: 'Examination Log!E2:E'//'Examination Log!D2:E'
+                range: 'Examination Log!E2:E'
             }).then(function (response) {
                 var range = response.result;
 
@@ -266,7 +281,7 @@ html
                         result.push(row[0])
                     }
                     var chartData = getExaminationTotalChartData(result);
-                    drawExaminationChart(chartData,'clinicalExaminationsTotal');
+                    drawChart(chartData,'clinicalExaminationsTotal');
                 } else {
                     //appendPre('No data found.');
                 }
@@ -278,16 +293,19 @@ html
         function getExaminationLogSheetCategory(fileID,type) {
             gapi.client.sheets.spreadsheets.values.get({
                 spreadsheetId: fileID,
-                range: 'Examination Log!D:E'
+                range: 'Examination Log!D2:E'
             }).then(function (response) {
                 var range = response.result;
                 if (range.values.length > 0) {
-                    for (i = 1; i < range.values.length; i++) {
-                        range.values[i][0]=range.values[i][0].split(':')[0]
+
+                    if (type==='clinicalExaminationsCategory'){
+                        for (i = 0; i < range.values.length; i++) {
+                            range.values[i][0] = range.values[i][0].split(':')[0]
+                        }
                     }
 
                     var chartData = getExaminationCategoryChartData(range.values);
-                    drawExaminationChart(chartData,'clinicalExaminationsCategory');
+                    drawChart(chartData,type);
                 } else {
                     //appendPre('No data found.');
                 }
@@ -299,23 +317,18 @@ html
         /**
         * get clinicalHourLogSheet data.
         */
-        function getHourLogSheet(fileID) {
+        function getHourLogSheet(fileID,type) {
+            var range;
+            if(type==="clinicalHoursTotal") range='Clinical Hours Log!B2:B';else range='Clinical Hours Log!A2:B'
             gapi.client.sheets.spreadsheets.values.get({
                 spreadsheetId: fileID,
-                range: 'Examination Hours Log!B2:E'//'Examination Log!D2:E'
+                range: range
             }).then(function (response) {
-                var range = response.result;
-
-                var result = [];
+                 var range = response.result;
+                 console.log(range)
                 if (range.values.length > 0) {
-
-                    for (i = 0; i < range.values.length; i++) {
-                        var row = range.values[i];
-
-                        result.push(row[0])
-
-                    }
-                    drawChart(result);
+                    var chartData =getClinicalHoursChartData(range.values,type)
+                    drawChart(chartData,type);
                 } else {
                     //appendPre('No data found.');
                 }
@@ -352,7 +365,7 @@ html
                 'name': "nextPageToken, files(id, name)"
             }).then(function (response) {
                 var files = response.result.files;
-                if (files) {
+                if (files.length) {
                      var fileID=files[0].id;
                     switch (type){
                         case 'clinicalLogBookLink':
@@ -362,16 +375,20 @@ html
                             getExaminationLogSheetTotal(fileID)
                             break
                         case 'clinicalExaminationsCategory':
-                            getExaminationLogSheetCategory(fileID,"category")
+                            getExaminationLogSheetCategory(fileID,"clinicalExaminationsCategory")
                             break
                         case 'clinicalExaminationsSubcategory':
-                            getExaminationLogSheetCategory(fileID,"subcategory")
+                            getExaminationLogSheetCategory(fileID,"clinicalExaminationsSubcategory")
                             break
-                        case 'clinicalHours':
+                        case 'clinicalHoursTotal':
+                            getHourLogSheet(fileID,'clinicalHoursTotal')
                             break
-
-
-
+                        case 'clinicalHoursMonth':
+                            getHourLogSheet(fileID,'clinicalHoursMonth')
+                            break
+                        // case 'clinicalHoursWeek':
+                        //     getHourLogSheet(fileID,'clinicalHoursWeek')
+                        //     break
 
                     }
 
@@ -394,7 +411,6 @@ html
                 var files = response.result.files;
                 if (files) {
                     var file = files[0];
-
 
                 } else {
                     //appendPre('No files found.');
