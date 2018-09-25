@@ -342,8 +342,7 @@ html
                 fields: 'webViewLink'
             }).then(function (response) {
 
-                var sheetIframe =document.getElementById('sheetIframe');
-                sheetIframe.src = JSON.parse(response.body).webViewLink.replace('edit', 'preview');
+                $('#sheetIframe').attr('src',JSON.parse(response.body).webViewLink.replace('edit', 'preview'));
 
 
             }, function (response) {
@@ -402,16 +401,26 @@ html
          */
         function listLepAssessments() {
 
-            var fileName = 'Longitudinal Evaluations of Performance (LEPs)'
+             var fileName = 'LEP bpon004 2017'
+            //var fileName='Longitudinal Evaluations of Performance (LEPs)'
+            //and mimeType='application/vnd.google-apps.document'
+            //and mimeType= 'application/pdf'
             gapi.client.drive.files.list({
-                q: "name='" + fileName + "'",
+                q: "name contains '" + fileName + "' and mimeType= 'application/pdf'",
                 'name': "nextPageToken, files(id, name)"
             }).then(function (response) {
                 var files = response.result.files;
+                console.log(files)
                 if (files) {
-                    console.log(files);
-                    var sheetIframe = document.getElementById('sheetIframe');
-                    sheetIframe.src= "https://drive.google.com/embeddedfolderview?id="+files[99].id+"#list";
+                    for (var i=0;i<files.length;i++){
+                         console.log(files[i].id);
+                         var url="https://drive.google.com/a/aucklanduni.ac.nz/file/d/"+files[i].id+"/view?usp=drivesdk";
+                         var link ='<a href='+url+' class="list-group-item list-group-item-action" target="_blank">'+files[i].name+'</a>'
+                        $("#lepList").append(link)
+
+                        // var sheetIframe = document.getElementById('sheetIframe');
+                        // sheetIframe.src = "https://drive.google.com/embeddedfolderview?id=" + files[99].id + "#list";
+                    }
 
                 } else {
                     //appendPre('No files found.');
