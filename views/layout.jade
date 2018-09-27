@@ -18,6 +18,7 @@ html
                   a#navbarDropdownMenuClinicalExaminations.nav-link.dropdown-toggle(href='/clinicalExaminationsLogSheet', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
                       | Clinical Examinations
                   .dropdown-menu(aria-labelledby='navbarDropdownMenuClinicalExaminations')
+                      a.dropdown-item(href='/clinicalExaminationsLogSheet') Clinical Examination Log Sheet
                       a.dropdown-item(href='/clinicalExaminationsTotal') Total
                       a.dropdown-item(href='/clinicalExaminationsCategory') Category
                       a.dropdown-item(href='/clinicalExaminationsSubcategory') Sub-category
@@ -25,6 +26,7 @@ html
                   a#navbarDropdownMenuClinicalHours.nav-link.dropdown-toggle(href='/clinicalHoursLogSheet', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
                       | Clinical Hours
                   .dropdown-menu(aria-labelledby='navbarDropdownMenuClinicalHours')
+                      a.dropdown-item(href='/clinicalHoursLogSheet') Clinical Hours Log Sheet
                       a.dropdown-item(href='/clinicalHoursTotal') Total
                       a.dropdown-item(href='/clinicalHoursMonth') Month
               li.nav-item
@@ -92,27 +94,16 @@ html
                 var email = googleAuth.currentUser.get().getBasicProfile().getEmail();
                 var upiResp = email.split("@")[0];
 
-                // Load Charts and the corechart and barchart packages.
+                // Load Charts and the chart packages.
                 google.charts.load('current', {'packages': ['corechart']});
 
-                // Draw the pie chart and bar chart when Charts is loaded.
-                if(document.getElementById('clinicalLogBookContainer')){
-                   getClinicalLogBook(upiResp,'clinicalLogBookLink') ;
-                    return;
-                }
-                if(document.getElementById('clinicalExaminationContainer') || document.getElementById('clinicalHoursContainer')){
-
-                       google.charts.setOnLoadCallback(getClinicalLogBook(upiResp,document.getElementsByClassName('chartContainer')[0].id));
-                       return;
-                }
 
                 if (document.getElementById('lepAssessmentsContainer')) {
                        google.charts.setOnLoadCallback(listLepAssessments(upiResp));
-                       return;
-                }
-
-                if(document.getElementById('clinicalSummaryContainer')){
+                }else if(document.getElementById('clinicalSummaryContainer')){
                     google.charts.setOnLoadCallback(listLepAssessments);
+                }else if(document.getElementsByClassName('contentContainer')){
+                    getClinicalLogBook(upiResp,document.getElementsByClassName('contentContainer')[0].id) ;
                 }
 
 
@@ -314,7 +305,7 @@ html
         */
         function getHourLogSheet(fileID,type) {
             var range;
-            if(type==="clinicalHoursTotal") range='Clinical Hours Log!B2:B';else range='Clinical Hours Log!A2:B'
+            if(type==="clinicalHoursTotal") range='Hours Log!B2:B';else range='Hours Log!A2:B'
             gapi.client.sheets.spreadsheets.values.get({
                 spreadsheetId: fileID,
                 range: range
@@ -331,14 +322,14 @@ html
             });
         }
 
-        function getClinicalLogBookLink(fileID) {
+        function getClinicalLogBookLink(fileID,type) {
 
             gapi.client.drive.files.get({
                 fileId: fileID,
                 fields: 'webViewLink'
             }).then(function (response) {
 
-                $('#sheetIframe').attr('src',JSON.parse(response.body).webViewLink.replace('edit', 'preview'));
+                $('#'+type).attr('src',JSON.parse(response.body).webViewLink.replace('edit', 'preview'));
 
 
             }, function (response) {
@@ -352,44 +343,58 @@ html
          */
         function getClinicalLogBook(upiResp,type) {
 
-            var fileName = 'Clinical Log Book(' + upiResp + ') Test'
 
-            gapi.client.drive.files.list({
-                q: "name='" + fileName + "'",
-                'name': "nextPageToken, files(id, name)"
-            }).then(function (response) {
-                var files = response.result.files;
-                if (files.length) {
-                     var fileID=files[0].id;
-                    switch (type){
-                        case 'clinicalLogBookLink':
-                            getClinicalLogBookLink(fileID)
-                            break
-                        case 'clinicalExaminationsTotal':
-                            getExaminationLogSheetTotal(fileID)
-                            break
-                        case 'clinicalExaminationsCategory':
-                            getExaminationLogSheetCategory(fileID,"clinicalExaminationsCategory")
-                            break
-                        case 'clinicalExaminationsSubcategory':
-                            getExaminationLogSheetCategory(fileID,"clinicalExaminationsSubcategory")
-                            break
-                        case 'clinicalHoursTotal':
-                            getHourLogSheet(fileID,'clinicalHoursTotal')
-                            break
-                        case 'clinicalHoursMonth':
-                            getHourLogSheet(fileID,'clinicalHoursMonth')
-                            break
-                        // case 'clinicalHoursWeek':
-                        //     getHourLogSheet(fileID,'clinicalHoursWeek')
-                        //     break
+            if(type==='clinicalHoursLogSheet'||type==='clinicalHoursTotal'||type==='clinicalHoursMonth'){
 
+                gapi.client.drive.files.list({
+                    q: "name='Clinical Hours Log Book("+upiResp+")'",
+                    'name': "nextPageToken, files(id, name)"
+                }).then(function (response) {
+                    var files = response.result.files;
+                    if (files.length) {
+                        console.log(files)
+                        var fileID = files[0].id;
+                        switch (type) {
+                            case 'clinicalHoursLogSheet':
+                                getClinicalLogBookLink(fileID)
+                                break
+                            default:
+                                getHourLogSheet(fileID, type)
+                                break
+
+                        }
+
+                    } else {
+                        //appendPre('No files found.');
                     }
+                });
 
-                } else {
-                    //appendPre('No files found.');
-                }
-            });
+            }else {
+
+                gapi.client.drive.files.list({
+                    q: "name='Clinical Examination Log Book(" + upiResp + ")'",
+                    'name': "nextPageToken, files(id, name)"
+                }).then(function (response) {
+                    var files = response.result.files;
+                    if (files.length) {
+                        var fileID = files[0].id;
+                        switch (type) {
+                            case 'clinicalExaminationsLogSheet':
+                                getClinicalLogBookLink(fileID,type)
+                                break
+                            default:
+                                getExaminationLogSheetCategory(fileID, type)
+                                break
+
+                        }
+
+                    } else {
+                        //appendPre('No files found.');
+                    }
+                });
+
+            }
+
         }
 
         /**
