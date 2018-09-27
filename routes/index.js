@@ -9,33 +9,34 @@ router.get('/', function(req, res, next) {
 });
 
 
-router.get('/clinicalLogBook', function(req, res, next) {
-    res.render('clinicalLogBook');
+router.get('/clinicalExaminationsLogSheet', function(req, res, next) {
+    res.render('clinicalLogBook',{type:'clinicalExaminationsLogSheet'});
 });
 
+router.get('/clinicalHoursLogSheet', function(req, res, next) {
+    res.render('clinicalLogBook',{type:'clinicalHoursLogSheet'});
+});
 
 router.get('/clinicalExaminationsTotal', function(req, res, next) {
-    res.render('clinicalExaminations',{type:'clinicalExaminationsTotal'});
+    res.render('clinicalChart',{type:'clinicalExaminationsTotal'});
 });
 
 router.get('/clinicalExaminationsCategory', function(req, res, next) {
-    res.render('clinicalExaminations',{type:'clinicalExaminationsCategory'});
+    res.render('clinicalChart',{type:'clinicalExaminationsCategory'});
 });
 
 router.get('/clinicalExaminationsSubcategory', function(req, res, next) {
-    res.render('clinicalExaminations',{type:'clinicalExaminationsSubcategory'});
+    res.render('clinicalChart',{type:'clinicalExaminationsSubcategory'});
 });
 
 router.get('/clinicalHoursTotal', function(req, res, next) {
-    res.render('clinicalHours',{type:'clinicalHoursTotal'});
+    res.render('clinicalChart',{type:'clinicalHoursTotal'});
 });
 router.get('/clinicalHoursMonth', function(req, res, next) {
-    res.render('clinicalHours',{type:'clinicalHoursMonth'});
+    res.render('clinicalChart',{type:'clinicalHoursMonth'});
 });
 
-// router.get('/clinicalHoursWeek', function(req, res, next) {
-//     res.render('clinicalHours',{type:'clinicalHoursWeek'});
-// });
+
 
 router.get('/clinicalSummary', function(req, res, next) {
     res.render('clinicalSummary');

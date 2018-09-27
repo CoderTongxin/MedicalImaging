@@ -17,14 +17,10 @@ iframe {
   height: 80%;
 }
 #clinicalLogBookContainer,
-#clinicalExaminationContainer,
-#clinicalHoursContainer,
+#clinicalChartContainer,
 #lepAssessmentsContainer {
   margin-top: 100px;
   height: 100%;
-}
-#clinicalExaminationsTotal {
-  flex: 1;
 }
 h1,
 h2,
