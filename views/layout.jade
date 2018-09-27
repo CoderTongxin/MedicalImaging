@@ -14,26 +14,22 @@ html
             span.navbar-toggler-icon
           #navbarNavDropdown.collapse.navbar-collapse
             ul.navbar-nav.mr-auto
-              li.nav-item
-                  a.nav-link(href='/clinicalLogBook') Clinical Log Book
               li.nav-item.dropdown
-                  a#navbarDropdownMenuClinicalExaminations.nav-link.dropdown-toggle(href='/', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                  a#navbarDropdownMenuClinicalExaminations.nav-link.dropdown-toggle(href='/clinicalExaminationsLogSheet', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
                       | Clinical Examinations
                   .dropdown-menu(aria-labelledby='navbarDropdownMenuClinicalExaminations')
                       a.dropdown-item(href='/clinicalExaminationsTotal') Total
                       a.dropdown-item(href='/clinicalExaminationsCategory') Category
                       a.dropdown-item(href='/clinicalExaminationsSubcategory') Sub-category
               li.nav-item.dropdown
-                  a#navbarDropdownMenuClinicalHours.nav-link.dropdown-toggle(href='/', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                  a#navbarDropdownMenuClinicalHours.nav-link.dropdown-toggle(href='/clinicalHoursLogSheet', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
                       | Clinical Hours
                   .dropdown-menu(aria-labelledby='navbarDropdownMenuClinicalHours')
                       a.dropdown-item(href='/clinicalHoursTotal') Total
                       a.dropdown-item(href='/clinicalHoursMonth') Month
-                      //a.dropdown-item(href='/clinicalHoursWeek') Week
               li.nav-item
                 a.nav-link(href='/lepAssessments') LEP Assessments
-              li.nav-item
-                a.nav-link(href='/clinicalSummary') Clinical Summary
+
 
             span.navbar-text
               #authorize_button(style='display: none;') Authorize
