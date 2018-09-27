@@ -291,7 +291,9 @@ html
                         }
                     }
                     var chartData = getExaminationCategoryChartData(range.values);
+                    console.log(chartData);
                     drawChart(chartData,type);
+                   // drawTable(chartData)
                 } else {
                     //appendPre('No data found.');
                 }
@@ -312,7 +314,8 @@ html
             }).then(function (response) {
                  var range = response.result;
                 if (range.values.length > 0) {
-                    var chartData =getClinicalHoursChartData(range.values,type)
+                    var chartData =getClinicalHoursChartData(range.values,type);
+                    console.log(chartData);
                     drawChart(chartData,type);
                 } else {
                     //appendPre('No data found.');
@@ -356,7 +359,7 @@ html
                         var fileID = files[0].id;
                         switch (type) {
                             case 'clinicalHoursLogSheet':
-                                getClinicalLogBookLink(fileID)
+                                getClinicalLogBookLink(fileID,type)
                                 break
                             default:
                                 getHourLogSheet(fileID, type)
@@ -381,6 +384,9 @@ html
                         switch (type) {
                             case 'clinicalExaminationsLogSheet':
                                 getClinicalLogBookLink(fileID,type)
+                                break
+                            case 'clinicalExaminationsTotal':
+                                getExaminationLogSheetTotal(fileID)
                                 break
                             default:
                                 getExaminationLogSheetCategory(fileID, type)
