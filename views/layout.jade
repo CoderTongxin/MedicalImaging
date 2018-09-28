@@ -1,41 +1,41 @@
 doctype html
 html
     head
-      meta(charset='utf-8')
-      meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
-      link(rel='stylesheet', href='vendor/bootstrap/css/bootstrap.min.css')
-      link(rel='stylesheet', href='stylesheets/style.css')
-      script(type='text/javascript', src='https://www.gstatic.com/charts/loader.js')
-      script(type='text/javascript').
+        meta(charset='utf-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+        link(rel='stylesheet', href='vendor/bootstrap/css/bootstrap.min.css')
+        link(rel='stylesheet', href='stylesheets/style.css')
+        script(type='text/javascript', src='https://www.gstatic.com/charts/loader.js')
+        script(type='text/javascript').
     body
         nav.navbar.navbar-expand-lg.navbar-dark.navbar-custom.fixed-top
-          a.navbar-brand(href='/') Medical Imaging
-          button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNavDropdown', aria-controls='navbarNavDropdown', aria-expanded='false', aria-label='Toggle navigation')
-            span.navbar-toggler-icon
-          #navbarNavDropdown.collapse.navbar-collapse
-            ul.navbar-nav.mr-auto
-              li.nav-item.dropdown
-                  a#navbarDropdownMenuClinicalExaminations.nav-link.dropdown-toggle(href='/clinicalExaminationsLogSheet', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
-                      | Clinical Examinations
-                  .dropdown-menu(aria-labelledby='navbarDropdownMenuClinicalExaminations')
-                      a.dropdown-item(href='/clinicalExaminationsLogSheet') Clinical Examination Log Sheet
-                      a.dropdown-item(href='/clinicalExaminationsTotal') Total
-                      a.dropdown-item(href='/clinicalExaminationsCategory') Category
-                      a.dropdown-item(href='/clinicalExaminationsSubcategory') Sub-category
-              li.nav-item.dropdown
-                  a#navbarDropdownMenuClinicalHours.nav-link.dropdown-toggle(href='/clinicalHoursLogSheet', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
-                      | Clinical Hours
-                  .dropdown-menu(aria-labelledby='navbarDropdownMenuClinicalHours')
-                      a.dropdown-item(href='/clinicalHoursLogSheet') Clinical Hours Log Sheet
-                      a.dropdown-item(href='/clinicalHoursTotal') Total
-                      a.dropdown-item(href='/clinicalHoursMonth') Month
-              li.nav-item
-                a.nav-link(href='/lepAssessments') LEP Assessments
+            a.navbar-brand(href='/') Medical Imaging
+            button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNavDropdown', aria-controls='navbarNavDropdown', aria-expanded='false', aria-label='Toggle navigation')
+                span.navbar-toggler-icon
+            #navbarNavDropdown.collapse.navbar-collapse
+                ul.navbar-nav.mr-auto
+                    li.nav-item.dropdown
+                        a#navbarDropdownMenuClinicalExaminations.nav-link.dropdown-toggle(href='/clinicalExaminationsLogSheet', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                            | Clinical Examinations
+                        .dropdown-menu(aria-labelledby='navbarDropdownMenuClinicalExaminations')
+                            a.dropdown-item(href='/clinicalExaminationsLogSheet') Clinical Examination Log Sheet
+                            a.dropdown-item(href='/clinicalExaminationsTotal') Total
+                            a.dropdown-item(href='/clinicalExaminationsCategory') Category
+                            a.dropdown-item(href='/clinicalExaminationsSubcategory') Sub-category
+                    li.nav-item.dropdown
+                        a#navbarDropdownMenuClinicalHours.nav-link.dropdown-toggle(href='/clinicalHoursLogSheet', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                            | Clinical Hours
+                        .dropdown-menu(aria-labelledby='navbarDropdownMenuClinicalHours')
+                            a.dropdown-item(href='/clinicalHoursLogSheet') Clinical Hours Log Sheet
+                            a.dropdown-item(href='/clinicalHoursTotal') Total
+                            a.dropdown-item(href='/clinicalHoursMonth') Month
+                    li.nav-item
+                        a.nav-link(href='/lepAssessments') LEP Assessments
 
 
-            span.navbar-text
-              #authorize_button(style='display: none;') Authorize
-              #signout_button(style='display: none;') Sign Out
+                span.navbar-text
+                    #authorize_button(style='display: none;') Authorize
+                    #signout_button(style='display: none;') Sign Out
 
         block content
 
@@ -99,11 +99,11 @@ html
 
 
                 if (document.getElementById('lepAssessmentsContainer')) {
-                       google.charts.setOnLoadCallback(listLepAssessments(upiResp));
-                }else if(document.getElementById('clinicalSummaryContainer')){
+                    google.charts.setOnLoadCallback(listLepAssessments(upiResp));
+                } else if (document.getElementById('clinicalSummaryContainer')) {
                     google.charts.setOnLoadCallback(listLepAssessments);
-                }else if(document.getElementsByClassName('contentContainer')){
-                    getClinicalLogBook(upiResp,document.getElementsByClassName('contentContainer')[0].id) ;
+                } else if (document.getElementsByClassName('contentContainer')) {
+                    getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id);
                 }
 
 
@@ -115,7 +115,7 @@ html
         }
         // count appearance
 
-        function getExaminationTotalChartData(arr){
+        function getExaminationTotalChartData(arr) {
             var a = [], b = [], prev;
             a.push('Type');
             b.push('All Examinations')
@@ -141,30 +141,30 @@ html
 
             arr.sort()
             var prev;
-            var category=[['Category','Observed','Performed independently','Performed assisted']];
+            var category = [['Category', 'Observed', 'Performed independently', 'Performed assisted']];
 
             for (var i = 0; i < arr.length; i++) {
 
                 if (arr[i][0] !== prev) {
-                      if(arr[i][1] === 'Observed'){
-                          category.push([arr[i][0],1,0,0]);
-                      }else if(arr[i][1]==='Performed independently'){
-                          category.push([arr[i][0],0,1,0]);
-                      }else {
-                          category.push([arr[i][0],0,0,1]);
-                      }
+                    if (arr[i][1] === 'Observed') {
+                        category.push([arr[i][0], 1, 0, 0]);
+                    } else if (arr[i][1] === 'Performed independently') {
+                        category.push([arr[i][0], 0, 1, 0]);
+                    } else {
+                        category.push([arr[i][0], 0, 0, 1]);
+                    }
 
-                }else {
+                } else {
 
                     if (arr[i][1] === 'Observed') {
 
-                        category[category.length-1][1]++;
+                        category[category.length - 1][1]++;
                     } else if (arr[i][1] === 'Performed independently') {
 
-                        category[category.length-1][2]++;
+                        category[category.length - 1][2]++;
                     } else {
 
-                        category[category.length-1][3]++;
+                        category[category.length - 1][3]++;
                     }
                 }
                 prev = arr[i][0];
@@ -174,43 +174,44 @@ html
         }
 
 
-        function getClinicalHoursChartData(arr,type) {
-            var hoursData=[['Type','Hours']]
-            if(type==='clinicalHoursTotal'){
-                var num=0;
-                for(var i =0; i<arr.length;i++){
-                    num+=Number(arr[i][0])
-                 }
-                hoursData.push(['Total',num])
+        function getClinicalHoursChartData(arr, type) {
+            var hoursData = [['Type', 'Hours']]
+            if (type === 'clinicalHoursTotal') {
+                var num = 0;
+                for (var i = 0; i < arr.length; i++) {
+                    num += Number(arr[i][0])
+                }
+                hoursData.push(['Total', num])
             } else {
                 arr.sort()
                 var prev;
                 for (var j = 0; j < arr.length; j++) {
-                    var date=arr[j][0].split('-',2);
-                    var month=date[0]+"-"+date[1];
-                    var hours=Number(arr[j][1])
-                    if(month!==prev){
-                       hoursData.push([month,hours])
-                    }else {
-                        hoursData[hoursData.length-1][1]+=hours;
+                    var date = arr[j][0].split('-', 2);
+                    var month = date[0] + "-" + date[1];
+                    var hours = Number(arr[j][1])
+                    if (month !== prev) {
+                        hoursData.push([month, hours])
+                    } else {
+                        hoursData[hoursData.length - 1][1] += hours;
                     }
-                    prev=month;
+                    prev = month;
                 }
             }
             return hoursData
 
         }
 
-        
-        function drawChart(chartData,type) {
+
+        function drawChart(chartData, type) {
             var title = getChartTitle(type);
             var data = google.visualization.arrayToDataTable(chartData);
             var ColumnChart_options = {
                 title: title,
                 width: '100%',
                 height: '100%',
-                legend:{position:'top',maxLines:3},
-                isStacked:true
+                bar: {groupWidth: "70%"},
+                legend: {position: 'top', maxLines: 3},
+                isStacked: true
             };
 
             var columnChart = new google.visualization.ColumnChart(document.getElementById(type));
@@ -218,7 +219,36 @@ html
 
         }
 
-        function getChartTitle(type){
+
+        function drawTable(chartData) {
+
+            var headContent = '';
+            var bodyContent = '';
+            $.each(chartData, function (i, x) {
+
+                if (i === 0) {
+                    for (var m = 0; m < x.length; m++) {
+                        headContent += '<th scope="col">' + x[m] + '</th>';
+                    }
+                } else {
+                    var bodyItem = '<tr><th scope="row">' + x[0] + '</th>';
+                    for (var l = 1; l < x.length; l++) {
+                        bodyItem += '<td>' + x[l] + '</td>'
+
+                    }
+                    bodyItem += '</tr>';
+                    bodyContent += bodyItem;
+                }
+
+
+            });
+
+
+            $("#clinicalTableHead").append(headContent);
+            $("#clinicalTableBody").append(bodyContent)
+        }
+
+        function getChartTitle(type) {
             switch (type) {
                 case 'clinicalExaminationsTotal':
                     return 'Examinations'
@@ -259,16 +289,18 @@ html
                 range: 'Examination Log!E2:E'
             }).then(function (response) {
                 var range = response.result;
-
+                console.log(range);
                 var result = [];
                 if (range.values.length > 0) {
 
-                    for (i = 0; i < range.values.length; i++) {
+                    for (var i = 0; i < range.values.length; i++) {
                         var row = range.values[i];
                         result.push(row[0])
                     }
                     var chartData = getExaminationTotalChartData(result);
-                    drawChart(chartData,'clinicalExaminationsTotal');
+                    console.log(chartData)
+                    drawChart(chartData, 'clinicalExaminationsTotal');
+                    drawTable(chartData)
                 } else {
                     //appendPre('No data found.');
                 }
@@ -277,23 +309,24 @@ html
             });
         }
 
-        function getExaminationLogSheetCategory(fileID,type) {
+        function getExaminationLogSheetCategory(fileID, type) {
             gapi.client.sheets.spreadsheets.values.get({
                 spreadsheetId: fileID,
                 range: 'Examination Log!D2:E'
             }).then(function (response) {
                 var range = response.result;
+                console.log(range);
                 if (range.values.length > 0) {
 
-                    if (type==='clinicalExaminationsCategory'){
-                        for (i = 0; i < range.values.length; i++) {
+                    if (type === 'clinicalExaminationsCategory') {
+                        for (var i = 0; i < range.values.length; i++) {
                             range.values[i][0] = range.values[i][0].split(':')[0]
                         }
                     }
                     var chartData = getExaminationCategoryChartData(range.values);
                     console.log(chartData);
-                    drawChart(chartData,type);
-                   // drawTable(chartData)
+                    drawChart(chartData, type);
+                    drawTable(chartData)
                 } else {
                     //appendPre('No data found.');
                 }
@@ -303,20 +336,22 @@ html
         }
 
         /**
-        * get clinicalHourLogSheet data.
-        */
-        function getHourLogSheet(fileID,type) {
+         * get clinicalHourLogSheet data.
+         */
+        function getHourLogSheet(fileID, type) {
             var range;
-            if(type==="clinicalHoursTotal") range='Hours Log!B2:B';else range='Hours Log!A2:B'
+            if (type === "clinicalHoursTotal") range = 'Hours Log!B2:B'; else range = 'Hours Log!A2:B'
             gapi.client.sheets.spreadsheets.values.get({
                 spreadsheetId: fileID,
                 range: range
             }).then(function (response) {
-                 var range = response.result;
+                var range = response.result;
+                console.log(range);
                 if (range.values.length > 0) {
-                    var chartData =getClinicalHoursChartData(range.values,type);
+                    var chartData = getClinicalHoursChartData(range.values, type);
                     console.log(chartData);
-                    drawChart(chartData,type);
+                    drawChart(chartData, type);
+                    drawTable(chartData)
                 } else {
                     //appendPre('No data found.');
                 }
@@ -325,14 +360,14 @@ html
             });
         }
 
-        function getClinicalLogBookLink(fileID,type) {
+        function getClinicalLogBookLink(fileID, type) {
 
             gapi.client.drive.files.get({
                 fileId: fileID,
                 fields: 'webViewLink'
             }).then(function (response) {
 
-                $('#'+type).attr('src',JSON.parse(response.body).webViewLink.replace('edit', 'preview'));
+                $('#' + type).attr('src', JSON.parse(response.body).webViewLink.replace('edit', 'preview'));
 
 
             }, function (response) {
@@ -344,13 +379,13 @@ html
         /**
          * get clinical log book.
          */
-        function getClinicalLogBook(upiResp,type) {
+        function getClinicalLogBook(upiResp, type) {
 
 
-            if(type==='clinicalHoursLogSheet'||type==='clinicalHoursTotal'||type==='clinicalHoursMonth'){
+            if (type === 'clinicalHoursLogSheet' || type === 'clinicalHoursTotal' || type === 'clinicalHoursMonth') {
 
                 gapi.client.drive.files.list({
-                    q: "name='Clinical Hours Log Book("+upiResp+")'",
+                    q: "name='Clinical Hours Log Book(" + upiResp + ")'",
                     'name': "nextPageToken, files(id, name)"
                 }).then(function (response) {
                     var files = response.result.files;
@@ -359,7 +394,7 @@ html
                         var fileID = files[0].id;
                         switch (type) {
                             case 'clinicalHoursLogSheet':
-                                getClinicalLogBookLink(fileID,type)
+                                getClinicalLogBookLink(fileID, type)
                                 break
                             default:
                                 getHourLogSheet(fileID, type)
@@ -372,7 +407,7 @@ html
                     }
                 });
 
-            }else {
+            } else {
 
                 gapi.client.drive.files.list({
                     q: "name='Clinical Examination Log Book(" + upiResp + ")'",
@@ -383,7 +418,7 @@ html
                         var fileID = files[0].id;
                         switch (type) {
                             case 'clinicalExaminationsLogSheet':
-                                getClinicalLogBookLink(fileID,type)
+                                getClinicalLogBookLink(fileID, type)
                                 break
                             case 'clinicalExaminationsTotal':
                                 getExaminationLogSheetTotal(fileID)
@@ -408,7 +443,7 @@ html
          */
         function listLepAssessments() {
 
-             var fileName = 'LEP bpon004 2017'
+            var fileName = 'LEP bpon004 2017'
             //var fileName='Longitudinal Evaluations of Performance (LEPs)'
             //and mimeType='application/vnd.google-apps.document'
             //and mimeType= 'application/pdf'
@@ -419,10 +454,10 @@ html
                 var files = response.result.files;
                 console.log(files)
                 if (files) {
-                    for (var i=0;i<files.length;i++){
-                         console.log(files[i].id);
-                         var url="https://drive.google.com/a/aucklanduni.ac.nz/file/d/"+files[i].id+"/view?usp=drivesdk";
-                         var link ='<a href='+url+' class="list-group-item list-group-item-action" target="_blank">'+files[i].name+'</a>'
+                    for (var i = 0; i < files.length; i++) {
+                        console.log(files[i].id);
+                        var url = "https://drive.google.com/a/aucklanduni.ac.nz/file/d/" + files[i].id + "/view?usp=drivesdk";
+                        var link = '<a href=' + url + ' class="list-group-item list-group-item-action" target="_blank">' + files[i].name + '</a>'
                         $("#lepList").append(link)
 
                         // var sheetIframe = document.getElementById('sheetIframe');
