@@ -102,7 +102,7 @@ html
                     google.charts.setOnLoadCallback(listLepAssessments(upiResp));
                 } else if (document.getElementById('clinicalSummaryContainer')) {
                     google.charts.setOnLoadCallback(listLepAssessments);
-                } else if (document.getElementsByClassName('contentContainer')) {
+                } else if (document.getElementsByClassName('contentContainer')[0]) {
                     getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id);
                 }
 
