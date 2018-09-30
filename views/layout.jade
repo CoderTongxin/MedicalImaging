@@ -36,7 +36,10 @@ html
                 span.navbar-text
                     #authorize_button(style='display: none;') Authorize
                     #signout_button(style='display: none;') Sign Out
-
+        .alert.alert-warning.alert-dismissible.fade.show(role='alert' id='alert' style='display: none;')
+            |  No data found.
+            button.close(type='button', data-dismiss='alert', aria-label='Close')
+                span(aria-hidden='true') ×
         block content
 
         // Footer
@@ -96,7 +99,7 @@ html
 
                 // Load Charts and the chart packages.
                 google.charts.load('current', {'packages': ['corechart']});
-
+              
 
                 if (document.getElementById('lepAssessmentsContainer')) {
                     google.charts.setOnLoadCallback(listLepAssessments(upiResp));
