@@ -270,6 +270,11 @@ html
 
         }
 
+        function showAlert(message) {
+            $('.alert').text(message);
+            $('.alert').alert();
+        }
+        showAlert('variable');
         /**
          *  Sign in the user upon button click.
          */
@@ -305,10 +310,10 @@ html
                     drawChart(chartData, 'clinicalExaminationsTotal');
                     drawTable(chartData)
                 } else {
-                    //appendPre('No data found.');
+                    showAlert('No data found')
                 }
             }, function (response) {
-                //appendPre('Error: ' + response.result.error.message);
+                showAlert('Error: ' + response.result.error.message)
             });
         }
 
@@ -331,10 +336,10 @@ html
                     drawChart(chartData, type);
                     drawTable(chartData)
                 } else {
-                    //appendPre('No data found.');
+                    showAlert('No data found')
                 }
             }, function (response) {
-                //appendPre('Error: ' + response.result.error.message);
+                showAlert('Error: ' + response.result.error.message)
             });
         }
 
@@ -356,10 +361,10 @@ html
                     drawChart(chartData, type);
                     drawTable(chartData)
                 } else {
-                    //appendPre('No data found.');
+                    showAlert('No data found')
                 }
             }, function (response) {
-                //appendPre('Error: ' + response.result.error.message);
+                showAlert('Error: ' + response.result.error.message)
             });
         }
 
@@ -374,7 +379,7 @@ html
 
 
             }, function (response) {
-                //appendPre('Error: ' + response.result.error.message);
+                showAlert('Error: ' + response.result.error.message)
             });
 
         }
@@ -406,7 +411,7 @@ html
                         }
 
                     } else {
-                        //appendPre('No files found.');
+                        showAlert('No files found')
                     }
                 });
 
@@ -433,7 +438,7 @@ html
                         }
 
                     } else {
-                        //appendPre('No files found.');
+                        showAlert('No files found')
                     }
                 });
 
@@ -470,7 +475,7 @@ html
                     }
 
                 } else {
-                    //appendPre('No files found.');
+                    showAlert('No files found')
                 }
             });
         }
