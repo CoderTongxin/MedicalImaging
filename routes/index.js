@@ -46,4 +46,8 @@ router.get('/lepAssessments', function(req, res, next) {
     res.render('lepAssessments');
 });
 
+router.get('/quarterlyProgressReports', function(req, res, next) {
+    res.render('quarterlyProgressReports');
+});
+
 module.exports = router;
