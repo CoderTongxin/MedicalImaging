@@ -6,11 +6,16 @@ html {
 a {
   color: #00b7ff;
 }
-.container {
+.container,
+#lepList {
   flex: 1;
 }
 #tableContainer {
-  margin-top: 60px;
+  margin-top: 50px;
+}
+.lep-icon {
+  width: 50px;
+  height: auto;
 }
 .container.row .nav-link.active {
   background-color: #2f4f4f;
@@ -32,6 +37,10 @@ h4,
 h5,
 h6 {
   font-weight: 700 !important;
+}
+th,
+td {
+  text-align: center;
 }
 .btn-xl {
   text-transform: uppercase;

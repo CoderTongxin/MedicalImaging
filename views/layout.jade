@@ -460,7 +460,9 @@ html
                     for (var i = 0; i < files.length; i++) {
                         console.log(files[i].id);
                         var url = "https://drive.google.com/a/aucklanduni.ac.nz/file/d/" + files[i].id + "/view?usp=drivesdk";
-                        var link = '<a href=' + url + ' class="list-group-item list-group-item-action" target="_blank">' + files[i].name + '</a>'
+                        var link = '<a href=' + url + ' class="list-group-item list-group-item-action" target="_blank">  ' +
+                            '<img class="lep-icon" src="/images/pdf.jpg" alt="...">'
+                            + files[i].name + '</a>'
                         $("#lepList").append(link)
 
                         // var sheetIframe = document.getElementById('sheetIframe');
