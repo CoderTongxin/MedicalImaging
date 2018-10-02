@@ -98,17 +98,15 @@ html
                 signoutButton.style.display = 'block';
                 var email = googleAuth.currentUser.get().getBasicProfile().getEmail();
                 var upiResp = email.split("@")[0];
-
                 // Load Charts and the chart packages.
                 google.charts.load('current', {'packages': ['corechart']});
-              
 
-                if (document.getElementById('lepAssessmentsContainer')) {
-                    google.charts.setOnLoadCallback(listLepAssessments(upiResp));
-                } else if (document.getElementById('clinicalSummaryContainer')) {
-                    google.charts.setOnLoadCallback(listLepAssessments);
-                } else if (document.getElementsByClassName('contentContainer')[0]) {
-                    getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id);
+                if ($('#lepAssessmentsContainer')) {
+                    listLepAssessments(upiResp);
+                } else if ($('.contentContainer')[0]) {
+                    google.charts.setOnLoadCallback(getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id));
+                }else if($('#quarterlyProgressReportsContainer')){
+                    listQuarterlyProgressReports(upiResp)
                 }
 
 
@@ -451,18 +449,16 @@ html
         /**
          * get clinical lep files.
          */
-        function listLepAssessments() {
+        function listLepAssessments(upiResp) {
 
             var fileName = 'LEP bpon004 2017'
-            //var fileName='Longitudinal Evaluations of Performance (LEPs)'
-            //and mimeType='application/vnd.google-apps.document'
-            //and mimeType= 'application/pdf'
+            //var fileName='LEP '+upiResp
             gapi.client.drive.files.list({
                 q: "name contains '" + fileName + "' and mimeType= 'application/pdf'",
                 'name': "nextPageToken, files(id, name)"
             }).then(function (response) {
                 var files = response.result.files;
-                console.log(files)
+
                 if (files) {
                     for (var i = 0; i < files.length; i++) {
                         console.log(files[i].id);
@@ -471,9 +467,30 @@ html
                             '<img class="lep-icon" src="/images/pdf.jpg" alt="...">'
                             + files[i].name + '</a>'
                         $("#lepList").append(link)
+                    }
 
-                        // var sheetIframe = document.getElementById('sheetIframe');
-                        // sheetIframe.src = "https://drive.google.com/embeddedfolderview?id=" + files[99].id + "#list";
+                } else {
+                    showAlert('No files found')
+                }
+            });
+        }
+
+        function listQuarterlyProgressReports(upiResp) {
+            var q = "name contains '' and mimeType= 'application/pdf'";
+            //var fileName='LEP '+upiResp
+            gapi.client.drive.files.list({
+                q: q,
+                'name': "nextPageToken, files(id, name)"
+            }).then(function (response) {
+                var files = response.result.files;
+                if (files) {
+                    for (var i = 0; i < files.length; i++) {
+                        console.log(files[i].id);
+                        var url = "https://drive.google.com/a/aucklanduni.ac.nz/file/d/" + files[i].id + "/view?usp=drivesdk";
+                        var link = '<a href=' + url + ' class="list-group-item list-group-item-action" target="_blank">  ' +
+                            '<img class="lep-icon" src="/images/pdf.jpg" alt="...">'
+                            + files[i].name + '</a>'
+                        $("#quarterlyProgressReportsList").append(link)
                     }
 
                 } else {
