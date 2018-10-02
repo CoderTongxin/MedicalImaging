@@ -28,11 +28,11 @@ html
                         .dropdown-menu(aria-labelledby='navbarDropdownMenuClinicalHours')
                             a.dropdown-item(href='/clinicalHoursLogSheet') Clinical Hours Log Sheet
                             a.dropdown-item(href='/clinicalHoursTotal') Total
-                            a.dropdown-item(href='/quarterlyProgressReports') Quarterly Progress Reports
+                            a.dropdown-item(href='/clinicalHoursMonth') Month
                     li.nav-item
                         a.nav-link(href='/lepAssessments') LEP Assessments
                     li.nav-item
-                        a.nav-link(href='/lepAssessments') LEP Assessments
+                        a.dropdown-item(href='/quarterlyProgressReports') Quarterly Progress Reports
 
 
                 span.navbar-text
@@ -299,7 +299,7 @@ html
                 range: 'Examination Log!E2:E'
             }).then(function (response) {
                 var range = response.result;
-                console.log(range);
+
                 var result = [];
                 if (range.values.length > 0) {
 
@@ -308,7 +308,7 @@ html
                         result.push(row[0])
                     }
                     var chartData = getExaminationTotalChartData(result);
-                    console.log(chartData)
+
                     drawChart(chartData, 'clinicalExaminationsTotal');
                     drawTable(chartData)
                 } else {
@@ -325,7 +325,7 @@ html
                 range: 'Examination Log!D2:E'
             }).then(function (response) {
                 var range = response.result;
-                console.log(range);
+
                 if (range.values.length > 0) {
 
                     if (type === 'clinicalExaminationsCategory') {
@@ -334,7 +334,7 @@ html
                         }
                     }
                     var chartData = getExaminationCategoryChartData(range.values);
-                    console.log(chartData);
+
                     drawChart(chartData, type);
                     drawTable(chartData)
                 } else {
