@@ -308,7 +308,8 @@ html
                     var chartData = getExaminationTotalChartData(result);
 
                     drawChart(chartData, 'clinicalExaminationsTotal');
-                    drawTable(chartData)
+                    drawTable(chartData);
+                    $('#newForm').text('Add data').attr('href','https://docs.google.com/forms/d/e/1FAIpQLScXRFxkyH6eDQdeR0sm2YHILvQY1ydSFrDLdd1EDSrdjqdDkA/viewform?usp=sf_link');
                 } else {
                     showAlert('No data found')
                 }
@@ -357,9 +358,10 @@ html
                 console.log(range);
                 if (range.values.length > 0) {
                     var chartData = getClinicalHoursChartData(range.values, type);
-                    console.log(chartData);
+
                     drawChart(chartData, type);
-                    drawTable(chartData)
+                    drawTable(chartData);
+
                 } else {
                     showAlert('No data found')
                 }
@@ -374,9 +376,13 @@ html
                 fileId: fileID,
                 fields: 'webViewLink'
             }).then(function (response) {
-
+                var formLink='';
                 $('#' + type).attr('src', JSON.parse(response.body).webViewLink.replace('edit', 'preview'));
-
+                console.log(type)
+                if(type==='clinicalHoursLogSheet') {formLink='https://docs.google.com/forms/d/e/1FAIpQLSdbSC_CQDOD0H_CEucYeZp3B80AnrvoqxkrSoyw601GPpDSDQ/viewform?usp=sf_link';}
+                else {formLink='https://docs.google.com/forms/d/e/1FAIpQLSdbSC_CQDOD0H_CEucYeZp3B80AnrvoqxkrSoyw601GPpDSDQ/viewform?usp=sf_link';}
+                var newForm="<a id='newForm' target='_blank' role='button' class='btn btn-primary' href="+formLink+ ")>Add Record</a>";
+                $('#newFormContainer').append(newForm);
 
             }, function (response) {
                 showAlert('Error: ' + response.result.error.message)
