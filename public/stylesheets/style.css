@@ -13,7 +13,7 @@ a {
 #tableContainer {
   margin-top: 50px;
 }
-.lep-icon {
+.pdf-icon {
   width: 50px;
   height: auto;
 }
@@ -26,7 +26,8 @@ iframe {
 }
 #clinicalLogBookContainer,
 #clinicalChartContainer,
-#lepAssessmentsContainer {
+#lepAssessmentsContainer,
+#quarterlyProgressReportsContainer {
   margin-top: 100px;
   height: 100%;
 }

@@ -32,7 +32,7 @@ html
                     li.nav-item
                         a.nav-link(href='/lepAssessments') LEP Assessments
                     li.nav-item
-                        a.dropdown-item(href='/quarterlyProgressReports') Quarterly Progress Reports
+                        a.nav-link(href='/quarterlyProgressReports') Quarterly Progress Reports
 
 
                 span.navbar-text
@@ -101,11 +101,11 @@ html
                 // Load Charts and the chart packages.
                 google.charts.load('current', {'packages': ['corechart']});
 
-                if ($('#lepAssessmentsContainer')) {
+                if ($('#lepAssessmentsContainer').length>0) {
                     listLepAssessments(upiResp);
                 } else if ($('.contentContainer')[0]) {
                     google.charts.setOnLoadCallback(getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id));
-                }else if($('#quarterlyProgressReportsContainer')){
+                }else if($('#quarterlyProgressReportsContainer').length>0){
                     listQuarterlyProgressReports(upiResp)
                 }
 
@@ -271,10 +271,10 @@ html
         }
 
         function showAlert(message) {
-            $('.alert').text(message);
-            $('.alert').alert();
+            $('#alert').text(message);
+            $('#alert').alert();
         }
-        showAlert('variable');
+
         /**
          *  Sign in the user upon button click.
          */
@@ -451,20 +451,19 @@ html
          */
         function listLepAssessments(upiResp) {
 
-            var fileName = 'LEP bpon004 2017'
-            //var fileName='LEP '+upiResp
+            var q="name contains 'LEP " + upiResp + "' and mimeType= 'application/pdf'";
             gapi.client.drive.files.list({
-                q: "name contains '" + fileName + "' and mimeType= 'application/pdf'",
+                q: q,
                 'name': "nextPageToken, files(id, name)"
             }).then(function (response) {
                 var files = response.result.files;
 
                 if (files) {
                     for (var i = 0; i < files.length; i++) {
-                        console.log(files[i].id);
+
                         var url = "https://drive.google.com/a/aucklanduni.ac.nz/file/d/" + files[i].id + "/view?usp=drivesdk";
                         var link = '<a href=' + url + ' class="list-group-item list-group-item-action" target="_blank">  ' +
-                            '<img class="lep-icon" src="/images/pdf.jpg" alt="...">'
+                            '<img class="pdf-icon" src="/images/pdf.jpg" alt="...">'
                             + files[i].name + '</a>'
                         $("#lepList").append(link)
                     }
@@ -476,8 +475,7 @@ html
         }
 
         function listQuarterlyProgressReports(upiResp) {
-            var q = "name contains '' and mimeType= 'application/pdf'";
-            //var fileName='LEP '+upiResp
+            var q = "(name contains 'SSE "+upiResp+"' or name contains 'QPR "+upiResp+"') and mimeType= 'application/pdf'";
             gapi.client.drive.files.list({
                 q: q,
                 'name': "nextPageToken, files(id, name)"
@@ -485,10 +483,9 @@ html
                 var files = response.result.files;
                 if (files) {
                     for (var i = 0; i < files.length; i++) {
-                        console.log(files[i].id);
                         var url = "https://drive.google.com/a/aucklanduni.ac.nz/file/d/" + files[i].id + "/view?usp=drivesdk";
                         var link = '<a href=' + url + ' class="list-group-item list-group-item-action" target="_blank">  ' +
-                            '<img class="lep-icon" src="/images/pdf.jpg" alt="...">'
+                            '<img class="pdf-icon" src="/images/pdf.jpg" alt="...">'
                             + files[i].name + '</a>'
                         $("#quarterlyProgressReportsList").append(link)
                     }
