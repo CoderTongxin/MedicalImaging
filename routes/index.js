@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const fs=require('fs');
 
 
 /* GET home page. */
@@ -50,4 +51,14 @@ router.get('/quarterlyProgressReports', function(req, res, next) {
     res.render('quarterlyProgressReports');
 });
 
+function getUserProgramme(upi) {
+    fs.readFile('file.txt', function(err, data) {
+        if(err) throw err;
+        let array = data.toString().split("\n");
+        for(let i in array) {
+            console.log(array[i]);
+        }
+    });
+
+}
 module.exports = router;
