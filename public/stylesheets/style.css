@@ -121,6 +121,9 @@ header.masthead .masthead-content .masthead-subheading {
     height: 600px;
   }
 }
+.btn-primary {
+  background-color: #134ead !important;
+}
 .display-4 {
   color: #008075;
 }
