@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const fs=require('fs');
+const readline = require('readline');
 
 
 /* GET home page. */
 
 router.get('/', function(req, res, next) {
-  res.render('index');
+
+    res.render('index');
 });
 
 
@@ -36,9 +38,6 @@ router.get('/clinicalHoursTotal', function(req, res, next) {
 router.get('/clinicalHoursMonth', function(req, res, next) {
     res.render('clinicalChart',{type:'clinicalHoursMonth'});
 });
-
-
-
 router.get('/clinicalSummary', function(req, res, next) {
     res.render('clinicalSummary');
 });
@@ -51,14 +50,5 @@ router.get('/quarterlyProgressReports', function(req, res, next) {
     res.render('quarterlyProgressReports');
 });
 
-function getUserProgramme(upi) {
-    fs.readFile('file.txt', function(err, data) {
-        if(err) throw err;
-        let array = data.toString().split("\n");
-        for(let i in array) {
-            console.log(array[i]);
-        }
-    });
 
-}
 module.exports = router;
