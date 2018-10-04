@@ -97,7 +97,8 @@ html
                 authorizeButton.style.display = 'none';
                 signoutButton.style.display = 'block';
                 var email = googleAuth.currentUser.get().getBasicProfile().getEmail();
-                var upiResp = email.split("@")[0];
+                //var upiResp = email.split("@")[0];
+                var upiResp = "xx";
                 // Load Charts and the chart packages.
                 google.charts.load('current', {'packages': ['corechart']});
                 $.ajax({
@@ -110,20 +111,18 @@ html
                             let arrayItem = array[i].split(',');
                             if (arrayItem[0] === upiResp) {
                                 console.log(arrayItem[1])
+                                if ($('#lepAssessmentsContainer').length > 0) {
+                                    listLepAssessments(upiResp);
+                                } else if ($('.contentContainer')[0]) {
+                                    google.charts.setOnLoadCallback(getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id));
+                                } else if ($('#quarterlyProgressReportsContainer').length > 0) {
+                                    listQuarterlyProgressReports(upiResp)
+                                }
                             }
                         }
 
                     }
                 })
-
-
-                if ($('#lepAssessmentsContainer').length > 0) {
-                    listLepAssessments(upiResp);
-                } else if ($('.contentContainer')[0]) {
-                    google.charts.setOnLoadCallback(getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id));
-                } else if ($('#quarterlyProgressReportsContainer').length > 0) {
-                    listQuarterlyProgressReports(upiResp)
-                }
 
 
             } else {
