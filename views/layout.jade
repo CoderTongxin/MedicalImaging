@@ -97,8 +97,8 @@ html
                 authorizeButton.style.display = 'none';
                 signoutButton.style.display = 'block';
                 var email = googleAuth.currentUser.get().getBasicProfile().getEmail();
-                //var upiResp = email.split("@")[0];
-                var upiResp = "xx";
+                var upiResp = email.split("@")[0];
+                //var upiResp = "xx";
                 // Load Charts and the chart packages.
                 google.charts.load('current', {'packages': ['corechart']});
                 $.ajax({
@@ -110,7 +110,8 @@ html
                         for (let i in array) {
                             let arrayItem = array[i].split(',');
                             if (arrayItem[0] === upiResp) {
-                                console.log(arrayItem[1])
+                                getBanner(arrayItem[1])
+                                $('#banner').css('background-image',"url('images/MedicalImaging.jpg')")
                                 if ($('#lepAssessmentsContainer').length > 0) {
                                     listLepAssessments(upiResp);
                                 } else if ($('.contentContainer')[0]) {
@@ -121,15 +122,30 @@ html
                             }
                         }
 
+                    },
+                    error: function (error) {
+                        alert(error);
                     }
                 })
-
-
             } else {
                 authorizeButton.style.display = 'block';
                 signoutButton.style.display = 'none';
 
             }
+        }
+
+        //get banner by modality
+        function getBanner(modality){
+              switch (modality){
+                  case 'MRI':
+                      return '';
+                  case 'Ultrasound':
+                      return '';
+                  case 'Mammography':
+                      return '';
+                  case 'Nuclear Medicine':
+                      return '';
+              }
         }
         // count appearance
 
