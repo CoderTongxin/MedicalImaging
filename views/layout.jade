@@ -95,8 +95,8 @@ html
                 authorizeButton.style.display = 'none';
                 signoutButton.style.display = 'block';
                 var email = googleAuth.currentUser.get().getBasicProfile().getEmail();
-                //var upiResp = email.split("@")[0];
-                var upiResp = "xx";
+                var upiResp = email.split("@")[0];
+               // var upiResp = "xx";
                 var result=false;
                 // Load Charts and the chart packages.
                 google.charts.load('current', {'packages': ['corechart']});
@@ -110,8 +110,7 @@ html
                             let arrayItem = array[i].split(',');
                             if (arrayItem[0] === upiResp) {
                                 result=true
-                                getBanner(arrayItem[1])
-                                $('#banner').css('background-image',"url('images/MedicalImaging.jpg')")
+                                $('#banner').css('background-image',"url('"+getBanner(arrayItem[1])+"')");
                                 if ($('#lepAssessmentsContainer').length > 0) {
                                     listLepAssessments(upiResp);
                                 } else if ($('.contentContainer')[0]) {
@@ -121,10 +120,6 @@ html
                                 }
                             }
                         }
-                       if(!result){
-
-                            showAlert('No student in the database');
-                       }
                     },
                     error: function (error) {
                         showAlert(error);
@@ -148,6 +143,8 @@ html
                       return '';
                   case 'Nuclear Medicine':
                       return '';
+                  default:
+                      return '../images/MedicalImaging.jpg'
               }
         }
         // count appearance
