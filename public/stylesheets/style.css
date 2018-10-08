@@ -28,7 +28,11 @@ iframe {
 #clinicalLogBookContainer,
 #clinicalChartContainer,
 #lepAssessmentsContainer,
-#quarterlyProgressReportsContainer,
+#quarterlyProgressReportsContainer {
+  display: none;
+  margin-top: 100px;
+  height: 100%;
+}
 #errorContainer {
   margin-top: 100px;
   height: 100%;

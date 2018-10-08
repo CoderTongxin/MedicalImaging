@@ -96,8 +96,8 @@ html
                 authorizeButton.style.display = 'none';
                 signoutButton.style.display = 'block';
                 var email = googleAuth.currentUser.get().getBasicProfile().getEmail();
-                //var upiResp = email.split("@")[0];
-                var upiResp = "xx";
+                var upiResp = email.split("@")[0];
+                //var upiResp = "xx";
                 var result=false;
                 // Load Charts and the chart packages.
                 google.charts.load('current', {'packages': ['corechart']});
@@ -331,7 +331,7 @@ html
         /**
          * get clinicalExaminationLogSheet data.
          */
-        function getExaminationLogSheetTotal(fileID) {
+        function getExaminationLogSheetTotal(fileID,type) {
             gapi.client.sheets.spreadsheets.values.get({
                 spreadsheetId: fileID,
                 range: 'Examination Log!E2:E'
@@ -346,12 +346,11 @@ html
                         result.push(row[0])
                     }
                     var chartData = getExaminationTotalChartData(result);
+                    drawData(chartData, type)
 
-                    drawChart(chartData, 'clinicalExaminationsTotal');
-                    drawTable(chartData);
                     $('#newForm').text('Add data').attr('href','https://docs.google.com/forms/d/e/1FAIpQLScXRFxkyH6eDQdeR0sm2YHILvQY1ydSFrDLdd1EDSrdjqdDkA/viewform?usp=sf_link');
                 } else {
-                    console.log(2)
+
                     showAlert('No data found')
                 }
             }, function (response) {
@@ -375,10 +374,9 @@ html
                     }
                     var chartData = getExaminationCategoryChartData(range.values);
 
-                    drawChart(chartData, type);
-                    drawTable(chartData)
+                   drawData(chartData,type)
                 } else {
-                    console.log(1)
+
                     showAlert('No data found')
                 }
             }, function (response) {
@@ -402,8 +400,7 @@ html
                 if (range.values.length > 0) {
                     var chartData = getClinicalHoursChartData(range.values, type);
 
-                    drawChart(chartData, type);
-                    drawTable(chartData);
+                   drawData(chartData,type)
 
                 } else {
                     showAlert('No data found')
@@ -412,6 +409,13 @@ html
                 showAlert('Error: ' + response.result.error.message)
             });
         }
+
+        function drawData(chartData,type){
+        $('#clinicalChartContainer').show();
+            drawChart(chartData, type);
+            drawTable(chartData)
+        }
+
 
         function getClinicalLogBookLink(fileID, type) {
 
@@ -481,7 +485,7 @@ html
                                 getClinicalLogBookLink(fileID, type)
                                 break
                             case 'clinicalExaminationsTotal':
-                                getExaminationLogSheetTotal(fileID)
+                                getExaminationLogSheetTotal(fileID,type)
                                 break
                             default:
                                 getExaminationLogSheetCategory(fileID, type)
