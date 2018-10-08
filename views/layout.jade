@@ -40,7 +40,8 @@ html
                     #signout_button(style='display: none;') Sign Out
 
         block content
-        .alert.alert-warning.alert-dismissible.collapse(role='alert' id='alert')
+        .container#errorContainer
+         .alert.alert-warning.alert-dismissible.collapse(role='alert' id='alert')
             |  No data found
         // Footer
         footer.py-4.bg-black
@@ -95,36 +96,43 @@ html
                 authorizeButton.style.display = 'none';
                 signoutButton.style.display = 'block';
                 var email = googleAuth.currentUser.get().getBasicProfile().getEmail();
-                var upiResp = email.split("@")[0];
-               // var upiResp = "xx";
+                //var upiResp = email.split("@")[0];
+                var upiResp = "xx";
                 var result=false;
                 // Load Charts and the chart packages.
                 google.charts.load('current', {'packages': ['corechart']});
-                $.ajax({
-                    url:'files/database.csv',
-                    dataType:'text',
-                    cache: false,
-                    success:function (data) {
-                        let array = data.toString().split("\n");
-                        for (let i in array) {
-                            let arrayItem = array[i].split(',');
-                            if (arrayItem[0] === upiResp) {
-                                result=true
-                                $('#banner').css('background-image',"url('"+getBanner(arrayItem[1])+"')");
-                                if ($('#lepAssessmentsContainer').length > 0) {
-                                    listLepAssessments(upiResp);
-                                } else if ($('.contentContainer')[0]) {
-                                    google.charts.setOnLoadCallback(getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id));
-                                } else if ($('#quarterlyProgressReportsContainer').length > 0) {
-                                    listQuarterlyProgressReports(upiResp)
+
+                if($('#banner').length>0){
+                    $.ajax({
+                        url: 'files/database.csv',
+                        dataType: 'text',
+                        cache: false,
+                        success: function (data) {
+                            let array = data.toString().split("\n");
+                            for (let i in array) {
+                                let arrayItem = array[i].split(',');
+                                if (arrayItem[0] === upiResp) {
+                                    result = true
+                                    var bannerURL = getBanner(arrayItem[1]);
+                                    $('#banner').css('background-image', "url('" + bannerURL + "')");
                                 }
                             }
+                        },
+                        error: function (error) {
+                            showAlert(error);
                         }
-                    },
-                    error: function (error) {
-                        showAlert(error);
+                    })
+
+                }else {
+                    if ($('#lepAssessmentsContainer').length > 0) {
+                        listLepAssessments(upiResp);
+                    } else if ($('.contentContainer')[0]) {
+                        google.charts.setOnLoadCallback(getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id));
+                    } else if ($('#quarterlyProgressReportsContainer').length > 0) {
+                        listQuarterlyProgressReports(upiResp)
                     }
-                })
+                }
+
             } else {
                 authorizeButton.style.display = 'block';
                 signoutButton.style.display = 'none';
@@ -136,13 +144,13 @@ html
         function getBanner(modality){
               switch (modality){
                   case 'MRI':
-                      return '';
+                      return '../images/MedicalImaging.jpg';
                   case 'Ultrasound':
-                      return '';
+                      return '../images/MedicalImaging.jpg';
                   case 'Mammography':
-                      return '';
+                      return '../images/MedicalImaging.jpg';
                   case 'Nuclear Medicine':
-                      return '';
+                      return '../images/MedicalImaging.jpg';
                   default:
                       return '../images/MedicalImaging.jpg'
               }
@@ -448,6 +456,7 @@ html
                         }
 
                     } else {
+                        $('#clinicalLogBookContainer').hide();
                         showAlert('No files found')
                     }
                 });
