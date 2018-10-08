@@ -137,6 +137,7 @@ html
             } else {
                 authorizeButton.style.display = 'block';
                 signoutButton.style.display = 'none';
+                showAlert("Please Login")
 
             }
         }
@@ -397,7 +398,7 @@ html
             }).then(function (response) {
 
                 var range = response.result;
-                console.log(range);
+
                 if (range.values.length > 0) {
                     var chartData = getClinicalHoursChartData(range.values, type);
 
@@ -419,6 +420,7 @@ html
                 fields: 'webViewLink'
             }).then(function (response) {
                 var formLink='';
+                $('#clinicalLogBookContainer').show();
                 $('#' + type).attr('src', JSON.parse(response.body).webViewLink.replace('edit', 'preview')).show();
                 if(type==='clinicalHoursLogSheet') {formLink='https://docs.google.com/forms/d/e/1FAIpQLSdbSC_CQDOD0H_CEucYeZp3B80AnrvoqxkrSoyw601GPpDSDQ/viewform?usp=sf_link';}
                 else {formLink='https://docs.google.com/forms/d/e/1FAIpQLSdbSC_CQDOD0H_CEucYeZp3B80AnrvoqxkrSoyw601GPpDSDQ/viewform?usp=sf_link';}
@@ -449,6 +451,7 @@ html
                         var fileID = files[0].id;
                         switch (type) {
                             case 'clinicalHoursLogSheet':
+
                                 getClinicalLogBookLink(fileID, type)
                                 break
                             default:
@@ -458,7 +461,7 @@ html
                         }
 
                     } else {
-                        $('#clinicalLogBookContainer').hide();
+
                         showAlert('No files found')
                     }
                 });
@@ -471,6 +474,7 @@ html
                 }).then(function (response) {
                     var files = response.result.files;
                     if (files.length) {
+
                         var fileID = files[0].id;
                         switch (type) {
                             case 'clinicalExaminationsLogSheet':
@@ -486,7 +490,6 @@ html
                         }
 
                     } else {
-                        $('#clinicalLogBookContainer').hide();
                         showAlert('No files found')
                     }
                 });
@@ -506,6 +509,7 @@ html
             }).then(function (response) {
                 var files = response.result.files;
                 if (files.length) {
+                    $(containerName).show();
                     for (var i = 0; i < files.length; i++) {
                         var url = "https://drive.google.com/a/aucklanduni.ac.nz/file/d/" + files[i].id + "/view?usp=drivesdk";
                         var link = '<a href=' + url + ' class="list-group-item list-group-item-action" target="_blank">  ' +
@@ -515,7 +519,7 @@ html
                     }
 
                 } else {
-                    $(containerName).hide();
+
                     showAlert('No files found')
                 }
             });
