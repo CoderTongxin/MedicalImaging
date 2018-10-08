@@ -101,7 +101,7 @@ html
                 var result=false;
                 // Load Charts and the chart packages.
                 google.charts.load('current', {'packages': ['corechart']});
-
+                //If it's the home page then render the banner
                 if($('#banner').length>0){
                     $.ajax({
                         url: 'files/database.csv',
@@ -122,14 +122,15 @@ html
                             showAlert(error);
                         }
                     })
-
+                //If it is not the homepage, render other elements
                 }else {
+
                     if ($('#lepAssessmentsContainer').length > 0) {
-                        listLepAssessments(upiResp);
-                    } else if ($('.contentContainer')[0]) {
-                        google.charts.setOnLoadCallback(getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id));
+                        listFiles("name contains 'LEP " + upiResp + "' and mimeType= 'application/pdf'",'#lepList',"#lepAssessmentsContainer")
                     } else if ($('#quarterlyProgressReportsContainer').length > 0) {
-                        listQuarterlyProgressReports(upiResp)
+                        listFiles("(name contains 'SSE " + upiResp + "' or name contains 'QPR " + upiResp + "') and mimeType= 'application/pdf'", '#quarterlyProgressReportsList', "#quarterlyProgressReportsContainer")
+                    }else if ($('.contentContainer')[0]) {
+                        google.charts.setOnLoadCallback(getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id));
                     }
                 }
 
@@ -349,6 +350,7 @@ html
                     drawTable(chartData);
                     $('#newForm').text('Add data').attr('href','https://docs.google.com/forms/d/e/1FAIpQLScXRFxkyH6eDQdeR0sm2YHILvQY1ydSFrDLdd1EDSrdjqdDkA/viewform?usp=sf_link');
                 } else {
+                    console.log(2)
                     showAlert('No data found')
                 }
             }, function (response) {
@@ -375,6 +377,7 @@ html
                     drawChart(chartData, type);
                     drawTable(chartData)
                 } else {
+                    console.log(1)
                     showAlert('No data found')
                 }
             }, function (response) {
@@ -416,8 +419,7 @@ html
                 fields: 'webViewLink'
             }).then(function (response) {
                 var formLink='';
-                $('#' + type).attr('src', JSON.parse(response.body).webViewLink.replace('edit', 'preview'));
-                console.log(type)
+                $('#' + type).attr('src', JSON.parse(response.body).webViewLink.replace('edit', 'preview')).show();
                 if(type==='clinicalHoursLogSheet') {formLink='https://docs.google.com/forms/d/e/1FAIpQLSdbSC_CQDOD0H_CEucYeZp3B80AnrvoqxkrSoyw601GPpDSDQ/viewform?usp=sf_link';}
                 else {formLink='https://docs.google.com/forms/d/e/1FAIpQLSdbSC_CQDOD0H_CEucYeZp3B80AnrvoqxkrSoyw601GPpDSDQ/viewform?usp=sf_link';}
                 var newForm="<a id='newForm' target='_blank' role='button' class='btn btn-primary' href="+formLink+ ")>Add Record</a>";
@@ -484,6 +486,7 @@ html
                         }
 
                     } else {
+                        $('#clinicalLogBookContainer').hide();
                         showAlert('No files found')
                     }
                 });
@@ -493,55 +496,30 @@ html
         }
 
         /**
-         * get clinical lep files.
+         * get clinical pdf files.
          */
-        function listLepAssessments(upiResp) {
 
-            var q="name contains 'LEP " + upiResp + "' and mimeType= 'application/pdf'";
+        function listFiles(q,id,containerName){
             gapi.client.drive.files.list({
                 q: q,
                 'name': "nextPageToken, files(id, name)"
             }).then(function (response) {
                 var files = response.result.files;
-
-                if (files) {
-                    for (var i = 0; i < files.length; i++) {
-
-                        var url = "https://drive.google.com/a/aucklanduni.ac.nz/file/d/" + files[i].id + "/view?usp=drivesdk";
-                        var link = '<a href=' + url + ' class="list-group-item list-group-item-action" target="_blank">  ' +
-                            '<img class="pdf-icon" src="/images/pdf.jpg" alt="...">'
-                            + files[i].name + '</a>'
-                        $("#lepList").append(link)
-                    }
-
-                } else {
-                    showAlert('No files found')
-                }
-            });
-        }
-
-        function listQuarterlyProgressReports(upiResp) {
-            var q = "(name contains 'SSE "+upiResp+"' or name contains 'QPR "+upiResp+"') and mimeType= 'application/pdf'";
-            gapi.client.drive.files.list({
-                q: q,
-                'name': "nextPageToken, files(id, name)"
-            }).then(function (response) {
-                var files = response.result.files;
-                if (files) {
+                if (files.length) {
                     for (var i = 0; i < files.length; i++) {
                         var url = "https://drive.google.com/a/aucklanduni.ac.nz/file/d/" + files[i].id + "/view?usp=drivesdk";
                         var link = '<a href=' + url + ' class="list-group-item list-group-item-action" target="_blank">  ' +
                             '<img class="pdf-icon" src="/images/pdf.jpg" alt="...">'
                             + files[i].name + '</a>'
-                        $("#quarterlyProgressReportsList").append(link)
+                        $(id).append(link)
                     }
 
                 } else {
+                    $(containerName).hide();
                     showAlert('No files found')
                 }
             });
         }
-
 
     script(async='', defer='', src='https://apis.google.com/js/api.js', onload='this.onload=function(){};handleClientLoad()', onreadystatechange="if (this.readyState === 'complete') this.onload()")
     script(src='vendor/jquery/jquery.min.js')
