@@ -127,17 +127,9 @@ html
                                 result = true
                                 var userType = arrayItem[2];
                                 if(userType==='student'){
-                                    if ($('#lepAssessmentsContainer').length > 0) {
-                                        listFiles("name contains 'LEP " + upiResp + "' and mimeType= 'application/pdf'", '#lepList', "#lepAssessmentsContainer")
-                                    } else if ($('#quarterlyProgressReportsContainer').length > 0) {
-                                        listFiles("(name contains 'SSE " + upiResp + "' or name contains 'QPR " + upiResp + "') and mimeType= 'application/pdf'", '#quarterlyProgressReportsList', "#quarterlyProgressReportsContainer")
-                                    } else if ($('.contentContainer')[0]) {
-                                        google.charts.setOnLoadCallback(getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id));
-                                    }
+                                    renderStudentPage(upiResp);
                                 }else {
-
-
-
+                                   renderSupervisorPage(upiResp);
                                 }
                                 break;
                             }
@@ -151,7 +143,7 @@ html
                 showAlert("Please Login")
             }
         }
-
+         // get user's info from local database file
          function getUserInfo(upiResp,cb_function){
              $.ajax({
                  url: 'files/database.csv',
@@ -163,6 +155,19 @@ html
                  }
              })
          }
+         // render pages when the user is a student
+        function renderStudentPage(upiResp){
+
+            if ($('#lepAssessmentsContainer').length > 0) {
+                listFiles("name contains 'LEP " + upiResp + "' and mimeType= 'application/pdf'", '#lepList', "#lepAssessmentsContainer")
+            } else if ($('#quarterlyProgressReportsContainer').length > 0) {
+                listFiles("(name contains 'SSE " + upiResp + "' or name contains 'QPR " + upiResp + "') and mimeType= 'application/pdf'", '#quarterlyProgressReportsList', "#quarterlyProgressReportsContainer")
+            } else if ($('.contentContainer')[0]) {
+                google.charts.setOnLoadCallback(getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id));
+            }
+        }
+        //render pages when the user is a supervisor
+        function renderSupervisorPage(upiResp){}
 
         //get banner by modality
         function getBanner(modality){
