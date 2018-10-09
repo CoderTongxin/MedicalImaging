@@ -97,8 +97,8 @@ html
                 authorizeButton.style.display = 'none';
                 signoutButton.style.display = 'block';
                 var email = googleAuth.currentUser.get().getBasicProfile().getEmail();
-                var upiResp = email.split("@")[0];
-                //var upiResp = "xx";
+                //var upiResp = email.split("@")[0];
+                var upiResp = "xx";
                 var result=false;
                 // Load Charts and the chart packages.
                 google.charts.load('current', {'packages': ['corechart']});
@@ -139,7 +139,6 @@ html
                 authorizeButton.style.display = 'block';
                 signoutButton.style.display = 'none';
                 showAlert("Please Login")
-
             }
         }
 
@@ -147,15 +146,15 @@ html
         function getBanner(modality){
               switch (modality){
                   case 'MRI':
-                      return '../images/MRIBanner.jpg';
+                      return 'images/MRIBanner.jpg';
                   case 'Ultrasound':
-                      return '../images/UltrasoundBanner.jpg';
+                      return 'images/UltrasoundBanner.jpg';
                   case 'Mammography':
-                      return '../images/MammographyBanner.jpg';
+                      return 'images/MammographyBanner.jpg';
                   case 'Nuclear Medicine':
-                      return '../images/NuclearMedicineBanner.jpg';
+                      return 'images/NuclearMedicineBanner.jpg';
                   default:
-                      return '../images/MedicalImaging.jpg'
+                      return 'images/MedicalImaging.jpg'
               }
         }
         // count appearance
