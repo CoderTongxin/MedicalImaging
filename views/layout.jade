@@ -97,42 +97,52 @@ html
                 authorizeButton.style.display = 'none';
                 signoutButton.style.display = 'block';
                 var email = googleAuth.currentUser.get().getBasicProfile().getEmail();
-                //var upiResp = email.split("@")[0];
-                var upiResp = "xx";
+                var upiResp = email.split("@")[0];
+                //var upiResp = "xx";
                 var result=false;
                 // Load Charts and the chart packages.
                 google.charts.load('current', {'packages': ['corechart']});
                 //If it's the home page then render the banner
                 if($('#banner').length>0){
-                    $.ajax({
-                        url: 'files/database.csv',
-                        dataType: 'text',
-                        cache: false,
-                        success: function (data) {
-                            let array = data.toString().split("\n");
-                            for (let i in array) {
-                                let arrayItem = array[i].split(',');
-                                if (arrayItem[0] === upiResp) {
-                                    result = true
-                                    var bannerURL = getBanner(arrayItem[1]);
-                                    $('#banner').css('background-image', "url('" + bannerURL + "')");
-                                }
-                            }
-                        },
-                        error: function (error) {
-                            showAlert(error);
-                        }
-                    })
+                       getUserInfo(upiResp,function (data) {
+                               let array = data.toString().split("\n");
+                               for (let i in array) {
+                                   let arrayItem = array[i].split(',');
+                                   if (arrayItem[0] === upiResp) {
+                                       result = true
+                                       var bannerURL = getBanner(arrayItem[1]);
+                                       $('#banner').css('background-image', "url('" + bannerURL + "')");
+                                       break;
+                                   }
+                               }
+                       })
                 //If it is not the homepage, render other elements
                 }else {
 
-                    if ($('#lepAssessmentsContainer').length > 0) {
-                        listFiles("name contains 'LEP " + upiResp + "' and mimeType= 'application/pdf'",'#lepList',"#lepAssessmentsContainer")
-                    } else if ($('#quarterlyProgressReportsContainer').length > 0) {
-                        listFiles("(name contains 'SSE " + upiResp + "' or name contains 'QPR " + upiResp + "') and mimeType= 'application/pdf'", '#quarterlyProgressReportsList', "#quarterlyProgressReportsContainer")
-                    }else if ($('.contentContainer')[0]) {
-                        google.charts.setOnLoadCallback(getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id));
-                    }
+                    getUserInfo(upiResp, function (data) {
+                        let array = data.toString().split("\n");
+                        for (let i in array) {
+                            let arrayItem = array[i].split(',');
+                            if (arrayItem[0] === upiResp) {
+                                result = true
+                                var userType = arrayItem[2];
+                                if(userType==='student'){
+                                    if ($('#lepAssessmentsContainer').length > 0) {
+                                        listFiles("name contains 'LEP " + upiResp + "' and mimeType= 'application/pdf'", '#lepList', "#lepAssessmentsContainer")
+                                    } else if ($('#quarterlyProgressReportsContainer').length > 0) {
+                                        listFiles("(name contains 'SSE " + upiResp + "' or name contains 'QPR " + upiResp + "') and mimeType= 'application/pdf'", '#quarterlyProgressReportsList', "#quarterlyProgressReportsContainer")
+                                    } else if ($('.contentContainer')[0]) {
+                                        google.charts.setOnLoadCallback(getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id));
+                                    }
+                                }else {
+
+
+
+                                }
+                                break;
+                            }
+                        }
+                    })
                 }
 
             } else {
@@ -141,6 +151,18 @@ html
                 showAlert("Please Login")
             }
         }
+
+         function getUserInfo(upiResp,cb_function){
+             $.ajax({
+                 url: 'files/database.csv',
+                 dataType: 'text',
+                 cache: false,
+                 success: cb_function,
+                 error: function (error) {
+                     showAlert(error);
+                 }
+             })
+         }
 
         //get banner by modality
         function getBanner(modality){
