@@ -20,6 +20,11 @@ a {
 .container.row .nav-link.active {
   background-color: #2f4f4f;
 }
+.img-fluid {
+  min-width: 300px;
+  max-height: 400px;
+  max-width: 400px;
+}
 iframe {
   width: 100%;
   height: 80%;
