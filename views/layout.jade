@@ -453,7 +453,7 @@ html
                 var formLink='';
                 $('#clinicalLogBookContainer').show();
                 $('#' + type).attr('src', JSON.parse(response.body).webViewLink.replace('edit', 'preview')).show();
-                if(type==='clinicalHoursLogSheet') {formLink='https://docs.google.com/forms/d/e/1FAIpQLSdbSC_CQDOD0H_CEucYeZp3B80AnrvoqxkrSoyw601GPpDSDQ/viewform?usp=sf_link';}
+                if(type==='clinicalHoursLogSheet') {formLink='https://docs.google.com/forms/d/e/1FAIpQLScXRFxkyH6eDQdeR0sm2YHILvQY1ydSFrDLdd1EDSrdjqdDkA/viewform?usp=sf_link';}
                 else {formLink='https://docs.google.com/forms/d/e/1FAIpQLSdbSC_CQDOD0H_CEucYeZp3B80AnrvoqxkrSoyw601GPpDSDQ/viewform?usp=sf_link';}
                 var newForm="<a id='newForm' target='_blank' role='button' class='btn btn-primary' href="+formLink+ ")>Add Record</a>";
                 $('#newFormContainer').append(newForm);
