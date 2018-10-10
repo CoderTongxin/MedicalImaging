@@ -282,7 +282,12 @@ html
                 height: '100%',
                 bar: {groupWidth: "70%"},
                 legend: {position: 'top', maxLines: 3},
-                isStacked: true
+                isStacked: true,
+                series: {
+                    0: {color: 'red'},
+                    1: {color: 'green'},
+                    2: {color: 'orange'}
+                }
             };
 
             var columnChart = new google.visualization.ColumnChart(document.getElementById(type));
@@ -400,7 +405,7 @@ html
                         }
                     }
                     var chartData = getExaminationCategoryChartData(range.values);
-
+                    console.log(chartData)
                    drawData(chartData,type)
                 } else {
 
