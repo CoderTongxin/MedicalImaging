@@ -55,7 +55,7 @@ html
         var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest", "https://sheets.googleapis.com/$discovery/rest?version=v4"];
         // Authorization scopes required by the API; multiple scopes can be
         // included, separated by spaces.
-        var SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
+        var SCOPES = 'https://www.googleapis.com/auth/drive';
 
 
         var authorizeButton = document.getElementById('authorize_button');
@@ -212,7 +212,7 @@ html
 
             arr.sort()
             var prev;
-            var category = [['Category', 'Observed', 'Performed independently', 'Performed assisted']];
+            var category = [['Category', 'Observed', 'Performed assisted','Performed independently']];
 
             for (var i = 0; i < arr.length; i++) {
 
@@ -285,8 +285,8 @@ html
                 isStacked: true,
                 series: {
                     0: {color: 'red'},
-                    1: {color: 'green'},
-                    2: {color: 'orange'}
+                    1: {color: 'orange'},
+                    2: {color: 'green'}
                 }
             };
 
@@ -315,7 +315,6 @@ html
                     bodyItem += '</tr>';
                     bodyContent += bodyItem;
                 }
-
 
             });
 
