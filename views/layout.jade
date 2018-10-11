@@ -126,8 +126,10 @@ html
                             if (arrayItem[0] === upiResp) {
                                 result = true
                                 var userType = arrayItem[2];
+                                var modality=arrayItem[1];
                                 if(userType==='student'){
-                                    renderStudentPage(upiResp);
+
+                                    renderStudentPage(upiResp,modality);
                                 }else {
                                    renderSupervisorPage(upiResp);
                                 }
@@ -156,14 +158,14 @@ html
              })
          }
          // render pages when the user is a student
-        function renderStudentPage(upiResp){
+        function renderStudentPage(upiResp,modality){
 
             if ($('#lepAssessmentsContainer').length > 0) {
                 listFiles("name contains 'LEP " + upiResp + "' and mimeType= 'application/pdf'", '#lepList', "#lepAssessmentsContainer")
             } else if ($('#quarterlyProgressReportsContainer').length > 0) {
                 listFiles("(name contains 'SSE " + upiResp + "' or name contains 'QPR " + upiResp + "') and mimeType= 'application/pdf'", '#quarterlyProgressReportsList', "#quarterlyProgressReportsContainer")
             } else if ($('.contentContainer')[0]) {
-                google.charts.setOnLoadCallback(getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id));
+                google.charts.setOnLoadCallback(getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id,modality));
             }
         }
         //render pages when the user is a supervisor
@@ -273,7 +275,7 @@ html
         }
 
 
-        function drawChart(chartData, type) {
+        function drawChart(chartData, type,color) {
             var title = getChartTitle(type);
             var data = google.visualization.arrayToDataTable(chartData);
             var ColumnChart_options = {
@@ -284,7 +286,7 @@ html
                 legend: {position: 'top', maxLines: 3},
                 isStacked: true,
                 series: {
-                    0: {color: 'red'},
+                    0: {color: color},
                     1: {color: 'orange'},
                     2: {color: 'green'}
                 }
@@ -377,7 +379,7 @@ html
                         result.push(row[0])
                     }
                     var chartData = getExaminationTotalChartData(result);
-                    drawData(chartData, type)
+                    drawData(chartData, type,'red')
 
                     $('#newForm').text('Add data').attr('href','https://docs.google.com/forms/d/e/1FAIpQLScXRFxkyH6eDQdeR0sm2YHILvQY1ydSFrDLdd1EDSrdjqdDkA/viewform?usp=sf_link');
                 } else {
@@ -404,8 +406,8 @@ html
                         }
                     }
                     var chartData = getExaminationCategoryChartData(range.values);
-                    console.log(chartData)
-                   drawData(chartData,type)
+
+                   drawData(chartData,type,'red')
                 } else {
 
                     showAlert('No data found')
@@ -418,7 +420,7 @@ html
         /**
          * get clinicalHourLogSheet data.
          */
-        function getHourLogSheet(fileID, type) {
+        function getHourLogSheet(fileID, type,modality) {
             var range;
             if (type === "clinicalHoursTotal") range = 'Hours Log!B2:B'; else range = 'Hours Log!A2:B'
             gapi.client.sheets.spreadsheets.values.get({
@@ -430,9 +432,8 @@ html
 
                 if (range.values.length > 0) {
                     var chartData = getClinicalHoursChartData(range.values, type);
-
-                   drawData(chartData,type)
-
+                    var color = getModalityColor(modality);
+                    drawData(chartData,type,color)
                 } else {
                     showAlert('No data found')
                 }
@@ -441,14 +442,14 @@ html
             });
         }
 
-        function drawData(chartData,type){
+        function drawData(chartData,type,modality){
         $('#clinicalChartContainer').show();
-            drawChart(chartData, type);
+            drawChart(chartData, type,modality);
             drawTable(chartData)
         }
 
 
-        function getClinicalLogBookLink(fileID, type) {
+        function getClinicalLogBookLink(fileID, type,modality) {
 
             gapi.client.drive.files.get({
                 fileId: fileID,
@@ -459,7 +460,7 @@ html
                 $('#' + type).attr('src', JSON.parse(response.body).webViewLink.replace('edit', 'preview')).show();
                 if(type==='clinicalHoursLogSheet') {formLink='https://docs.google.com/forms/d/e/1FAIpQLScXRFxkyH6eDQdeR0sm2YHILvQY1ydSFrDLdd1EDSrdjqdDkA/viewform?usp=sf_link';}
                 else {formLink='https://docs.google.com/forms/d/e/1FAIpQLSdbSC_CQDOD0H_CEucYeZp3B80AnrvoqxkrSoyw601GPpDSDQ/viewform?usp=sf_link';}
-                var newForm="<a id='newForm' target='_blank' role='button' class='btn btn-primary' href="+formLink+ ")>Add Record</a>";
+                var newForm="<a id='newForm' target='_blank' role='button' class='btn'  style='background-color:"+getModalityColor(modality)+"' href="+formLink+ ")>Add Record</a>";
                 $('#newFormContainer').append(newForm);
 
             }, function (response) {
@@ -467,11 +468,29 @@ html
             });
 
         }
+        //get color by modality
+
+        function getModalityColor(modality){
+            switch(modality){
+                case 'MRI':
+                    return '#2E4E8E';
+                case 'Ultrasound':
+                    return '#309A1C';
+                case 'Mammography':
+                    return '#BF7CA0';
+                case 'Nuclear Medicine':
+                    return '#F7E74C';
+                default:
+                    return 'red'
+            }
+
+
+        }
 
         /**
          * get clinical log book.
          */
-        function getClinicalLogBook(upiResp, type) {
+        function getClinicalLogBook(upiResp, type,modality) {
 
 
             if (type === 'clinicalHoursLogSheet' || type === 'clinicalHoursTotal' || type === 'clinicalHoursMonth') {
@@ -482,15 +501,15 @@ html
                 }).then(function (response) {
                     var files = response.result.files;
                     if (files.length) {
-                        console.log(files)
+
                         var fileID = files[0].id;
                         switch (type) {
                             case 'clinicalHoursLogSheet':
 
-                                getClinicalLogBookLink(fileID, type)
+                                getClinicalLogBookLink(fileID, type,modality)
                                 break
                             default:
-                                getHourLogSheet(fileID, type)
+                                getHourLogSheet(fileID, type,modality)
                                 break
 
                         }
@@ -513,7 +532,7 @@ html
                         var fileID = files[0].id;
                         switch (type) {
                             case 'clinicalExaminationsLogSheet':
-                                getClinicalLogBookLink(fileID, type)
+                                getClinicalLogBookLink(fileID, type,modality)
                                 break
                             case 'clinicalExaminationsTotal':
                                 getExaminationLogSheetTotal(fileID,type)
