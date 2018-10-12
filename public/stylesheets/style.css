@@ -46,6 +46,9 @@ iframe {
   margin-top: 100px;
   height: 100%;
 }
+#homeContent {
+  display: none;
+}
 h1,
 h2,
 h3,

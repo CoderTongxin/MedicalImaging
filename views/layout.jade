@@ -7,6 +7,7 @@ html
         link(rel='stylesheet', href='stylesheets/style.css')
         script(type='text/javascript', src='https://www.gstatic.com/charts/loader.js')
         script(type='text/javascript').
+
     body
         nav.navbar.navbar-expand-lg.navbar-dark.navbar-custom.fixed-top
             a.navbar-brand(href='/') Medical Imaging
@@ -67,6 +68,9 @@ html
         function handleClientLoad() {
             gapi.load('client:auth2', initClient);
         }
+
+
+
         /**
          *  Initializes the API client library and sets up sign-in state
          *  listeners.
@@ -111,9 +115,9 @@ html
                                    let arrayItem = array[i].split(',');
                                    if (arrayItem[0] === upiResp) {
                                        result = true
-                                       var bannerURL = getBanner(arrayItem[1]);
-                                       $('#banner').css('background-image', "url('" + bannerURL + "')");
-                                       $('#errorContainer').css('height','auto')
+                                       var modality=arrayItem[1];
+                                       renderHomePage(modality)
+
                                        break;
                                    }
                                }
@@ -159,6 +163,68 @@ html
                  }
              })
          }
+         //render home page
+        function renderHomePage(modality){
+            $('#banner').css('background-image', "url('images/" + modality + "Banner.jpg')");
+            $('#modalityImage').attr('src','images/'+modality+'.jpg')
+            $('#modalityTitle').text("PGCertHSc("+modality+")");
+            var modalityContent=getModalityContent(modality)
+            $('#modalityContent').html(modalityContent)
+            $('#errorContainer').css('height', 'auto');
+            $('#homeContent').show()
+
+        }
+
+
+
+        function getModalityContent(modality){
+
+            switch (modality) {
+                case 'MRI':
+                    return ' As part of your PGDipHSc(MRI) programme, you need to see and perform a large number and range of MRI examinations. This will help you to develop the necessary skills to become a competent MRI technologist. <br> ' +
+                        'It is your responsibility to ensure that all of the following evidence of your clinical progress is up-to-date and available for review every three months:<br>' +
+                        '•\tLogbook (clinical hours and clinical examinations up-to-date and audited)<br>' +
+                        '•\tLEP assessment forms (minimum of 2 attempted)<br>' +
+                        '•\tStudent self-evaluative progress report (SSE)<br>' +
+                        '•\tSupervisor quarterly progress report (QPR)<br>' +
+                        'All pieces of evidence must be submitted on 1st February, 1st May, 1st August, 1st November each year of your programme (until you have passed CLINIMAG 712). <br>' +
+                        'If you or your Supervisor are unable to complete any of the components on time, a clinical extension request form must be emailed to MIClinical@auckland.ac.nz prior to the due date. <br>' +
+                        'Failure to meet the any of above requirements may delay your progression in the programme.<br>';
+                case 'Ultrasound':
+                    return ' As part of your PGDipHSc(Ultrasound) programme, you need to see and perform a large number and range of ultrasound examinations. This will help you to develop the necessary skills to become a competent sonographer. . <br> ' +
+                        'It is your responsibility to ensure that all of the following evidence of your clinical progress is up-to-date and available for review every three months:<br>' +
+                        '•\tLogbook (clinical hours and clinical examinations up-to-date and audited)<br>' +
+                        '•\tLEP assessment forms (minimum of 2 attempted)<br>' +
+                        '•\tStudent self-evaluative progress report (SSE)<br>' +
+                        '•\tSupervisor quarterly progress report (QPR)<br>' +
+                        'All pieces of evidence must be submitted on 1st February, 1st May, 1st August, 1st November each year of your programme (until you have passed CLINIMAG 715). <br>' +
+                        'If you or your Supervisor are unable to complete any of the components on time, a clinical extension request form must be emailed to MIClinical@auckland.ac.nz prior to the due date. <br>' +
+                        'Failure to meet the any of above requirements may delay your progression in the programme.<br>';
+                case 'Mammography':
+                    return ' As part of your PGCertHSc(Mammography) programme, you need to see and perform a large number and range of mammographic examinations. This will help you to develop the necessary skills to become a competent mammographer. <br> ' +
+                        'It is your responsibility to ensure that all of the following evidence of your clinical progress is up-to-date and available for review every three months:<br>' +
+                        '•\tLogbook (clinical hours and clinical examinations up-to-date and audited)<br>' +
+                        '•\tLEP assessment forms (minimum of 2 attempted)<br>' +
+                        '•\tStudent self-evaluative progress report (SSE)<br>' +
+                        '•\tSupervisor quarterly progress report (QPR)<br>' +
+                        'All pieces of evidence must be submitted on 1st February, 1st May, 1st August, 1st November until you have passed CLINIMAG 708. <br>' +
+                        'If you or your Supervisor are unable to complete any of the components on time, a clinical extension request form must be emailed to MIClinical@auckland.ac.nz prior to the due date. <br>' +
+                        'Failure to meet the any of above requirements may delay your progression in the programme.<br>';
+                case 'Nuclear Medicine':
+                    return ' As part of your PGDipHSc(MRI) programme, you need to see and perform a large number and range of MRI examinations. This will help you to develop the necessary skills to become a competent MRI technologist. <br> ' +
+                        'It is your responsibility to ensure that all of the following evidence of your clinical progress is up-to-date and available for review every three months:<br>' +
+                        '•\tLogbook (clinical hours and clinical examinations up-to-date and audited)<br>' +
+                        '•\tLEP assessment forms (minimum of 2 attempted)<br>' +
+                        '•\tStudent self-evaluative progress report (SSE)<br>' +
+                        '•\tSupervisor quarterly progress report (QPR)<br>' +
+                        'All pieces of evidence must be submitted on 1st February, 1st May, 1st August, 1st November each year of your programme (until you have passed CLINIMAG 712). <br>' +
+                        'If you or your Supervisor are unable to complete any of the components on time, a clinical extension request form must be emailed to MIClinical@auckland.ac.nz prior to the due date. <br>' +
+                        'Failure to meet the any of above requirements may delay your progression in the programme.<br>';
+
+            }
+
+
+        }
          // render pages when the user is a student
         function renderStudentPage(upiResp,modality){
 
@@ -174,21 +240,6 @@ html
         //render pages when the user is a supervisor
         function renderSupervisorPage(upiResp){}
 
-        //get banner by modality
-        function getBanner(modality){
-              switch (modality){
-                  case 'MRI':
-                      return 'images/MRIBanner.jpg';
-                  case 'Ultrasound':
-                      return 'images/UltrasoundBanner.png';
-                  case 'Mammography':
-                      return 'images/MammographyBanner.jpg';
-                  case 'Nuclear Medicine':
-                      return 'images/NuclearMedicineBanner.jpg';
-                  default:
-                      return 'images/MedicalImaging.jpg'
-              }
-        }
         // count appearance
 
         function getExaminationTotalChartData(arr) {
