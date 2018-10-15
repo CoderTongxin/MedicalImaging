@@ -228,7 +228,6 @@ html
          // render pages when the user is a student
         function renderStudentPage(upiResp,modality){
 
-
             if ($('#lepAssessmentsContainer').length > 0) {
                 listFiles("name contains 'LEP " + upiResp + "' and mimeType= 'application/pdf'", '#lepList', "#lepAssessmentsContainer")
             } else if ($('#quarterlyProgressReportsContainer').length > 0) {
@@ -330,6 +329,7 @@ html
 
 
         function drawChart(chartData, type,color) {
+
             var title = getChartTitle(type);
             var data = google.visualization.arrayToDataTable(chartData);
             var ColumnChart_options = {
@@ -460,8 +460,9 @@ html
                             range.values[i][0] = range.values[i][0].split(':')[0]
                         }
                     }
+                    console.log(range.values)
                     var chartData = getExaminationCategoryChartData(range.values);
-
+                    console.log(chartData)
                    drawData(chartData,type,'red')
                 } else {
 
@@ -486,7 +487,9 @@ html
                 var range = response.result;
 
                 if (range.values.length > 0) {
+                     console.log(range.values)
                     var chartData = getClinicalHoursChartData(range.values, type);
+                     console.log(chartData);
                     var color = getModalityColor(modality);
                     drawData(chartData,type,color)
                 } else {
@@ -513,6 +516,7 @@ html
                 var formLink='';
                 $('#clinicalLogBookContainer').show();
                 $('#' + type).attr('src', JSON.parse(response.body).webViewLink.replace('edit', 'preview')).show();
+
                 if(type==='clinicalHoursLogSheet') {formLink='https://docs.google.com/forms/d/e/1FAIpQLScXRFxkyH6eDQdeR0sm2YHILvQY1ydSFrDLdd1EDSrdjqdDkA/viewform?usp=sf_link';}
                 else {formLink='https://docs.google.com/forms/d/e/1FAIpQLSdbSC_CQDOD0H_CEucYeZp3B80AnrvoqxkrSoyw601GPpDSDQ/viewform?usp=sf_link';}
                 var newForm="<a id='newForm' target='_blank' role='button' class='btn'  style='background-color:"+getModalityColor(modality)+"' href="+formLink+ ")>Add Record</a>";
@@ -545,7 +549,7 @@ html
         /**
          * get clinical log book.
          */
-        function getClinicalLogBook(upiResp, type,modality) {
+        function getClinicalLogBook(upiResp,type,modality) {
 
 
             if (type === 'clinicalHoursLogSheet' || type === 'clinicalHoursTotal' || type === 'clinicalHoursMonth') {
@@ -556,11 +560,9 @@ html
                 }).then(function (response) {
                     var files = response.result.files;
                     if (files.length) {
-
                         var fileID = files[0].id;
                         switch (type) {
                             case 'clinicalHoursLogSheet':
-
                                 getClinicalLogBookLink(fileID, type,modality)
                                 break
                             default:
@@ -628,7 +630,6 @@ html
                     }
                     $('#errorContainer').css('height', 'auto')
                 } else {
-
                     showAlert('No files found')
                 }
             });
