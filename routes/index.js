@@ -37,9 +37,10 @@ router.get('/clinicalHoursTotal', function(req, res, next) {
 router.get('/clinicalHoursMonth', function(req, res, next) {
     res.render('clinicalChart',{type:'clinicalHoursMonth'});
 });
-router.get('/clinicalSummary', function(req, res, next) {
-    res.render('clinicalSummary');
-});
+
+// router.get('/clinicalSummary', function(req, res, next) {
+//     res.render('clinicalSummary');
+// });
 
 router.get('/lepAssessments', function(req, res, next) {
     res.render('lepAssessments');
