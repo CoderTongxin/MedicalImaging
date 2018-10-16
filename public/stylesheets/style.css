@@ -40,7 +40,7 @@ iframe {
 #quarterlyProgressReportsContainer {
   display: none;
   margin-top: 100px;
-  height: 100%;
+  height: auto;
 }
 #errorContainer {
   margin-top: 100px;
@@ -48,6 +48,9 @@ iframe {
 }
 #homeContent {
   display: none;
+}
+#tableContainer {
+  flex: 1;
 }
 h1,
 h2,

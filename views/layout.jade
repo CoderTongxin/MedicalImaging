@@ -113,6 +113,7 @@ html
                 if($('#banner').length>0){
 
                        getUserInfo(upiResp,function (data) {
+
                                let array = data.toString().split("\n");
                                for (let i in array) {
                                    let arrayItem = array[i].split(',');
@@ -126,6 +127,10 @@ html
 
                                        break;
                                    }
+                               }
+
+                               if(!result){
+                                   showAlert("No user in database")
                                }
                        })
                 //If it is not the homepage, render other elements
@@ -150,6 +155,10 @@ html
                                 }
                                 break;
                             }
+                        }
+
+                        if(!result){
+                            showAlert("No user in database")
                         }
                     })
                 }
@@ -412,9 +421,11 @@ html
                 if(type==='clinicalHoursLogSheet') {formLink='https://docs.google.com/forms/d/e/1FAIpQLScXRFxkyH6eDQdeR0sm2YHILvQY1ydSFrDLdd1EDSrdjqdDkA/viewform?usp=sf_link';}
                 else {formLink='https://docs.google.com/forms/d/e/1FAIpQLSdbSC_CQDOD0H_CEucYeZp3B80AnrvoqxkrSoyw601GPpDSDQ/viewform?usp=sf_link';}
                 //create an button contains the form link
-                var newForm="<a id='newForm' target='_blank' role='button' class='btn'  style='background-color:"+getModalityColor(modality)+"' href="+formLink+ ")>Add Record</a>";
+                var newForm="<a id='newForm'  target='_blank' role='button' class='btn'  style='background-color:"+getModalityColor(modality)+"' href="+formLink+ ")>Add Record</a>";
                 //append the button to the page
                 $('#newFormContainer').append(newForm);
+                $('#clinicalLogBookContainer').css('height', '100%')
+                $('#errorContainer').css('height', 'auto')
 
             }, function (response) {
                 showAlert('Error: ' + response.result.error.message)
@@ -512,7 +523,9 @@ html
                         //append the item to the page
                         $(id).append(link)
                     }
-                    $('#errorContainer').css('height', 'auto')
+                    $('#errorContainer').css('height', 'auto');
+                    $('#lepAssessmentsContainer').css('height', '100%');
+                    $('#quarterlyProgressReportsContainer').css('height', '100%');
                 } else {
                     showAlert('No files found')
                 }
@@ -628,7 +641,9 @@ html
         function drawData(chartData, type, modality) {
             $('#clinicalChartContainer').show();
             drawChart(chartData, type, modality);
-            drawTable(chartData)
+            drawTable(chartData);
+            $(document).on("click", "#clinicalChartContainer", function () {
+            });
         }
 
 
