@@ -97,6 +97,7 @@ html
          */
         function updateSigninStatus(isSignedIn) {
             $('#alert').hide();
+
             if (isSignedIn) {
                 authorizeButton.style.display = 'none';
                 signoutButton.style.display = 'block';
@@ -424,8 +425,7 @@ html
                 var newForm="<a id='newForm'  target='_blank' role='button' class='btn'  style='background-color:"+getModalityColor(modality)+"' href="+formLink+ ")>Add Record</a>";
                 //append the button to the page
                 $('#newFormContainer').append(newForm);
-                $('#clinicalLogBookContainer').css('height', '100%')
-                $('#errorContainer').css('height', 'auto')
+                $('#errorContainer').hide()
 
             }, function (response) {
                 showAlert('Error: ' + response.result.error.message)
@@ -523,9 +523,7 @@ html
                         //append the item to the page
                         $(id).append(link)
                     }
-                    $('#errorContainer').css('height', 'auto');
-                    $('#lepAssessmentsContainer').css('height', '100%');
-                    $('#quarterlyProgressReportsContainer').css('height', '100%');
+                    $('#errorContainer').hide();
                 } else {
                     showAlert('No files found')
                 }
@@ -639,11 +637,25 @@ html
          * draw data ( one chart and one table)
          */
         function drawData(chartData, type, modality) {
-            $('#clinicalChartContainer').show();
+            var chartContainer=$('#clinicalChartContainer')
+            chartContainer.show();
+            //set the container height to auto
+            chartContainer.css('height', 'auto')
+            //draw the chart and table
             drawChart(chartData, type, modality);
             drawTable(chartData);
+            //refresh the dom
             $(document).on("click", "#clinicalChartContainer", function () {
             });
+            //get chart container height
+            var chartHeight = chartContainer.height();
+            //get window height
+            var windowHeight = $(window).height();
+            //if the container height is less than the window height, then adjust the container height (avoid empty space on the page)
+            if (chartHeight < windowHeight) {
+                chartContainer.css('height', '100%')
+            }
+
         }
 
 
@@ -701,7 +713,7 @@ html
             // append rows and columns to tha page
             $("#clinicalTableHead").append(headContent);
             $("#clinicalTableBody").append(bodyContent);
-            $('#errorContainer').css('height', 'auto')
+            $('#errorContainer').hide()
         }
 
 
