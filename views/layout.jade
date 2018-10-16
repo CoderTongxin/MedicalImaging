@@ -100,12 +100,15 @@ html
             if (isSignedIn) {
                 authorizeButton.style.display = 'none';
                 signoutButton.style.display = 'block';
+                //get user's email
                 var email = googleAuth.currentUser.get().getBasicProfile().getEmail();
+                //get user's upi
                 var upiResp = email.split("@")[0];
                 //var upiResp = "xx";
                 var result=false;
                 // Load Charts and the chart packages.
                 google.charts.load('current', {'packages': ['corechart']});
+
                 //If it's the home page then render the banner
                 if($('#banner').length>0){
 
@@ -113,9 +116,12 @@ html
                                let array = data.toString().split("\n");
                                for (let i in array) {
                                    let arrayItem = array[i].split(',');
+                                   //find the user's info in the database
                                    if (arrayItem[0] === upiResp) {
                                        result = true
+                                       //get modality
                                        var modality=arrayItem[1];
+                                       //render the home page by modality
                                        renderHomePage(modality)
 
                                        break;
@@ -129,9 +135,12 @@ html
                         let array = data.toString().split("\n");
                         for (let i in array) {
                             let arrayItem = array[i].split(',');
+                            //find the user's info in the database
                             if (arrayItem[0] === upiResp) {
                                 result = true
+                                //get user type (student or supervisor)
                                 var userType = arrayItem[2];
+                                // get user's modality
                                 var modality=arrayItem[1];
                                 if(userType==='student'){
 
@@ -146,6 +155,7 @@ html
                 }
 
             } else {
+                //change the authentication status button
                 authorizeButton.style.display = 'block';
                 signoutButton.style.display = 'none';
                 showAlert("Please Login")
@@ -153,6 +163,7 @@ html
         }
          // get user's info from local database file
          function getUserInfo(upiResp,cb_function){
+            //call ajax function to read 'database.csv'
              $.ajax({
                  url: 'files/database.csv',
                  dataType: 'text',
@@ -163,20 +174,54 @@ html
                  }
              })
          }
-         //render home page
+        /**
+         *  Sign in the user upon button click.
+         */
+        function handleAuthClick(event) {
+            gapi.auth2.getAuthInstance().signIn();
+        }
+        /**
+         *  Sign out the user upon button click.
+         */
+        function handleSignoutClick(event) {
+            gapi.auth2.getAuthInstance().signOut();
+        }
+
+
+
+        /**
+         * show alert info
+         */
+          function showAlert(message) {
+              $('#alert').text(message).show();
+          }
+
+        /**
+         * render home page elements
+         */
+
         function renderHomePage(modality){
+            //change the banner image by modality
             $('#banner').css('background-image', "url('images/" + modality + "Banner.jpg')");
+            //change the homepage image by modality
             $('#modalityImage').attr('src','images/'+modality+'.jpg')
+            //change the homepage title by modality
             $('#modalityTitle').text("PGCertHSc("+modality+")");
+            //get different homepage text by modality
             var modalityContent=getModalityContent(modality)
             $('#modalityContent').html(modalityContent)
+
+            //set error container's height
             $('#errorContainer').css('height', 'auto');
+            //show home content div
             $('#homeContent').show()
 
         }
 
 
-
+        /**
+         * get home page content by modality
+         */
         function getModalityContent(modality){
 
             switch (modality) {
@@ -225,228 +270,70 @@ html
 
 
         }
-         // render pages when the user is a student
-        function renderStudentPage(upiResp,modality){
 
+
+        /**
+         * render pages when the user is a student
+         */
+        function renderStudentPage(upiResp,modality){
+            // If it's the lep assessments page then list lep file list
             if ($('#lepAssessmentsContainer').length > 0) {
                 listFiles("name contains 'LEP " + upiResp + "' and mimeType= 'application/pdf'", '#lepList', "#lepAssessmentsContainer")
-            } else if ($('#quarterlyProgressReportsContainer').length > 0) {
+            }
+            // If it's the quarterly progress reports page then render quarterly progress report page
+            else if ($('#quarterlyProgressReportsContainer').length > 0) {
                 listFiles("(name contains 'SSE " + upiResp + "' or name contains 'QPR " + upiResp + "') and mimeType= 'application/pdf'", '#quarterlyProgressReportsList', "#quarterlyProgressReportsContainer")
-            } else if ($('.contentContainer')[0]) {
+            }
+            // If it's other page then get clinical sheet by different type
+            else if ($('.contentContainer')[0]) {
                 google.charts.setOnLoadCallback(getClinicalLogBook(upiResp, document.getElementsByClassName('contentContainer')[0].id,modality));
             }
         }
-        //render pages when the user is a supervisor
+
+
+        /**
+         * render pages when the user is a supervisor
+         */
         function renderSupervisorPage(upiResp){}
 
-        // count appearance
-
-        function getExaminationTotalChartData(arr) {
-            var a = [], b = [], prev;
-            a.push('Type');
-            b.push('All Examinations')
-            arr.sort();
-            for (var i = 0; i < arr.length; i++) {
-                if (arr[i] !== prev) {
-                    a.push(arr[i]);
-                    b.push(1);
-                } else {
-                    b[b.length - 1]++;
-                }
-                prev = arr[i];
-            }
-
-            var chartData = []
-            chartData.push(a);
-            chartData.push(b)
-
-            return chartData;
-        }
-
-        function getExaminationCategoryChartData(arr) {
-
-            arr.sort()
-            var prev;
-            var category = [['Category', 'Observed', 'Performed assisted','Performed independently']];
-
-            for (var i = 0; i < arr.length; i++) {
-
-                if (arr[i][0] !== prev) {
-                    if (arr[i][1] === 'Observed') {
-                        category.push([arr[i][0], 1, 0, 0]);
-                    } else if (arr[i][1] === 'Performed assisted') {
-                        category.push([arr[i][0], 0, 1, 0]);
-                    } else {
-                        category.push([arr[i][0], 0, 0, 1]);
-                    }
-
-                } else {
-
-                    if (arr[i][1] === 'Observed') {
-
-                        category[category.length - 1][1]++;
-                    } else if (arr[i][1] === 'Performed assisted') {
-
-                        category[category.length - 1][2]++;
-                    } else {
-
-                        category[category.length - 1][3]++;
-                    }
-                }
-                prev = arr[i][0];
-            }
-
-            return category;
-        }
-
-
-        function getClinicalHoursChartData(arr, type) {
-            var hoursData = [['Type', 'Hours']]
-            if (type === 'clinicalHoursTotal') {
-                var num = 0;
-                for (var i = 0; i < arr.length; i++) {
-                    num += Number(arr[i][0])
-                }
-                hoursData.push(['Total', num])
-            } else {
-                arr.sort()
-                var prev;
-                for (var j = 0; j < arr.length; j++) {
-                    var date = arr[j][0].split('-', 2);
-                    var month = date[0] + "-" + date[1];
-                    var hours = Number(arr[j][1])
-                    if (month !== prev) {
-                        hoursData.push([month, hours])
-                    } else {
-                        hoursData[hoursData.length - 1][1] += hours;
-                    }
-                    prev = month;
-                }
-            }
-            return hoursData
-
-        }
-
-
-        function drawChart(chartData, type,color) {
-
-            var title = getChartTitle(type);
-            var data = google.visualization.arrayToDataTable(chartData);
-            var ColumnChart_options = {
-                title: title,
-                width: '1000px',
-                height: '100%',
-                bar: {groupWidth: "70%"},
-                legend: {position: 'top', maxLines: 3},
-                isStacked: true,
-                series: {
-                    0: {color: color},
-                    1: {color: 'orange'},
-                    2: {color: 'green'}
-                }
-            };
-
-            var columnChart = new google.visualization.ColumnChart(document.getElementById(type));
-            columnChart.draw(data, ColumnChart_options);
-
-        }
-
-
-        function drawTable(chartData) {
-
-            var headContent = '';
-            var bodyContent = '';
-            $.each(chartData, function (i, x) {
-
-                if (i === 0) {
-                    for (var m = 0; m < x.length; m++) {
-                        headContent += '<th scope="col">' + x[m] + '</th>';
-                    }
-                } else {
-                    var bodyItem = '<tr><th scope="row">' + x[0] + '</th>';
-                    for (var l = 1; l < x.length; l++) {
-                        bodyItem += '<td>' + x[l] + '</td>'
-
-                    }
-                    bodyItem += '</tr>';
-                    bodyContent += bodyItem;
-                }
-
-            });
-
-
-            $("#clinicalTableHead").append(headContent);
-            $("#clinicalTableBody").append(bodyContent);
-            $('#errorContainer').css('height', 'auto')
-        }
-
-        function getChartTitle(type) {
-            switch (type) {
-                case 'clinicalExaminationsTotal':
-                    return 'Examinations'
-                case 'clinicalExaminationsCategory':
-                    return 'Examinations(by category)'
-                case 'clinicalExaminationsSubcategory':
-                    return 'Examinations(by sub-category)'
-                case 'clinicalHoursTotal':
-                    return 'Total Clinical Hours'
-                case 'clinicalHoursMonth':
-                    return 'Clinical Hours(by Month)'
-                case 'clinicalHoursWeek':
-                    return 'Clinical Hours(by Week)'
-
-            }
-
-        }
-
-        function showAlert(message) {
-            $('#alert').text(message).show();
-        }
-
         /**
-         *  Sign in the user upon button click.
-         */
-        function handleAuthClick(event) {
-            gapi.auth2.getAuthInstance().signIn();
-        }
-        /**
-         *  Sign out the user upon button click.
-         */
-        function handleSignoutClick(event) {
-            gapi.auth2.getAuthInstance().signOut();
-        }
-
-        /**
-         * get clinicalExaminationLogSheet data.
+         * get clinicalExaminationLogSheet total data.
          */
         function getExaminationLogSheetTotal(fileID,type) {
+
+            // get data from clinical examination sheet by the specific range
             gapi.client.sheets.spreadsheets.values.get({
                 spreadsheetId: fileID,
                 range: 'Examination Log!E2:E'
             }).then(function (response) {
                 var range = response.result;
-
                 var result = [];
+                //push data to an array
                 if (range.values.length > 0) {
-
                     for (var i = 0; i < range.values.length; i++) {
                         var row = range.values[i];
                         result.push(row[0])
                     }
+                    //parse the data
                     var chartData = getExaminationTotalChartData(result);
+                    //draw the chart and set the first column's to red (the color of Observed role)
                     drawData(chartData, type,'red')
 
-                    $('#newForm').text('Add data').attr('href','https://docs.google.com/forms/d/e/1FAIpQLScXRFxkyH6eDQdeR0sm2YHILvQY1ydSFrDLdd1EDSrdjqdDkA/viewform?usp=sf_link');
                 } else {
-
+                    //if no data in the sheet then show alert info
                     showAlert('No data found')
                 }
             }, function (response) {
+                //if can't get the sheet from google drive then show alert info
                 showAlert('Error: ' + response.result.error.message)
             });
         }
-
+        /**
+         * get clinicalExaminationLogSheet category data.
+         */
         function getExaminationLogSheetCategory(fileID, type) {
+
+            // get data from clinical examination sheet by the specific range
             gapi.client.sheets.spreadsheets.values.get({
                 spreadsheetId: fileID,
                 range: 'Examination Log!D2:E'
@@ -454,15 +341,18 @@ html
                 var range = response.result;
 
                 if (range.values.length > 0) {
-
+                    //parse the data to a right format when the page is clinicalExaminationsCategory page, else skip this step
                     if (type === 'clinicalExaminationsCategory') {
                         for (var i = 0; i < range.values.length; i++) {
                             range.values[i][0] = range.values[i][0].split(':')[0]
                         }
                     }
+
                     console.log(range.values)
+                    //parse the data
                     var chartData = getExaminationCategoryChartData(range.values);
                     console.log(chartData)
+                    //draw the chart and set the first column's to red (the color of Observed role)
                    drawData(chartData,type,'red')
                 } else {
 
@@ -478,6 +368,7 @@ html
          */
         function getHourLogSheet(fileID, type,modality) {
             var range;
+            //if the page is clinicalHoursTotal then set the query range of the sheet (only read hours column), else set the range to read date and hours
             if (type === "clinicalHoursTotal") range = 'Hours Log!B2:B'; else range = 'Hours Log!A2:B'
             gapi.client.sheets.spreadsheets.values.get({
                 spreadsheetId: fileID,
@@ -488,9 +379,12 @@ html
 
                 if (range.values.length > 0) {
                      console.log(range.values)
+                    //parse the data
                     var chartData = getClinicalHoursChartData(range.values, type);
                      console.log(chartData);
+                     //get the chart color by modality
                     var color = getModalityColor(modality);
+                    //draw the data and set the chart color by modality
                     drawData(chartData,type,color)
                 } else {
                     showAlert('No data found')
@@ -500,26 +394,26 @@ html
             });
         }
 
-        function drawData(chartData,type,modality){
-        $('#clinicalChartContainer').show();
-            drawChart(chartData, type,modality);
-            drawTable(chartData)
-        }
 
-
+        /**
+         * get webviewLink of the sheet
+         */
         function getClinicalLogBookLink(fileID, type,modality) {
-
+            //get webviewlink of the file using google drive api by file id
             gapi.client.drive.files.get({
                 fileId: fileID,
                 fields: 'webViewLink'
             }).then(function (response) {
                 var formLink='';
                 $('#clinicalLogBookContainer').show();
+                //make the webview content view only and insert to the iframe (so user can not edit the sheet)
                 $('#' + type).attr('src', JSON.parse(response.body).webViewLink.replace('edit', 'preview')).show();
-
+                //get the google form link by sheet type
                 if(type==='clinicalHoursLogSheet') {formLink='https://docs.google.com/forms/d/e/1FAIpQLScXRFxkyH6eDQdeR0sm2YHILvQY1ydSFrDLdd1EDSrdjqdDkA/viewform?usp=sf_link';}
                 else {formLink='https://docs.google.com/forms/d/e/1FAIpQLSdbSC_CQDOD0H_CEucYeZp3B80AnrvoqxkrSoyw601GPpDSDQ/viewform?usp=sf_link';}
+                //create an button contains the form link
                 var newForm="<a id='newForm' target='_blank' role='button' class='btn'  style='background-color:"+getModalityColor(modality)+"' href="+formLink+ ")>Add Record</a>";
+                //append the button to the page
                 $('#newFormContainer').append(newForm);
 
             }, function (response) {
@@ -527,33 +421,17 @@ html
             });
 
         }
-        //get color by modality
-
-        function getModalityColor(modality){
-            switch(modality){
-                case 'MRI':
-                    return '#2E4E8E';
-                case 'Ultrasound':
-                    return '#309A1C';
-                case 'Mammography':
-                    return '#BF7CA0';
-                case 'Nuclear Medicine':
-                    return '#F7E74C';
-                default:
-                    return 'red'
-            }
 
 
-        }
 
         /**
          * get clinical log book.
          */
         function getClinicalLogBook(upiResp,type,modality) {
 
-
+            // get clinical hours sheet when the page type is related type
             if (type === 'clinicalHoursLogSheet' || type === 'clinicalHoursTotal' || type === 'clinicalHoursMonth') {
-
+                //get the clinical hours sheet using google drive api
                 gapi.client.drive.files.list({
                     q: "name='Clinical Hours Log Book(" + upiResp + ")'",
                     'name': "nextPageToken, files(id, name)"
@@ -578,7 +456,7 @@ html
                 });
 
             } else {
-
+                //get the clinical examination sheet using google drive api
                 gapi.client.drive.files.list({
                     q: "name='Clinical Examination Log Book(" + upiResp + ")'",
                     'name': "nextPageToken, files(id, name)"
@@ -614,18 +492,24 @@ html
          */
 
         function listFiles(q,id,containerName){
+
+            // get file list by different query info using google drive api
             gapi.client.drive.files.list({
                 q: q,
                 'name': "nextPageToken, files(id, name)"
             }).then(function (response) {
                 var files = response.result.files;
+                // if files are found
                 if (files.length) {
                     $(containerName).show();
                     for (var i = 0; i < files.length; i++) {
+                        //get file link by id
                         var url = "https://drive.google.com/a/aucklanduni.ac.nz/file/d/" + files[i].id + "/view?usp=drivesdk";
+                        // generate an <a> element contains the file's link and a pdf icon
                         var link = '<a href=' + url + ' class="list-group-item list-group-item-action" target="_blank">  ' +
                             '<img class="pdf-icon" src="/images/pdf.jpg" alt="...">'
                             + files[i].name + '</a>'
+                        //append the item to the page
                         $(id).append(link)
                     }
                     $('#errorContainer').css('height', 'auto')
@@ -634,6 +518,222 @@ html
                 }
             });
         }
+
+        /**
+         * Parse the examination total data to the format that can be applied to google chart api.
+         */
+        function getExaminationTotalChartData(arr) {
+
+            var a = [], b = [], prev;
+            //set chart title
+            a.push('Type');
+            b.push('All Examinations')
+            arr.sort();
+
+            //count appearance of each role (observed, performed assistant, performed independently)
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i] !== prev) {
+                    a.push(arr[i]);
+                    b.push(1);
+                } else {
+                    b[b.length - 1]++;
+                }
+                prev = arr[i];
+            }
+
+            var chartData = []
+            chartData.push(a);
+            chartData.push(b)
+
+            return chartData;
+        }
+
+        /**
+         * Parse the examination category data to the format that can be applied to google chart api
+         */
+        function getExaminationCategoryChartData(arr) {
+
+            arr.sort()
+            var prev;
+            var category = [['Category', 'Observed', 'Performed assisted', 'Performed independently']];
+            //count appearance of each role by category (observed, performed assistant, performed independently)
+            for (var i = 0; i < arr.length; i++) {
+
+                if (arr[i][0] !== prev) {
+                    if (arr[i][1] === 'Observed') {
+                        category.push([arr[i][0], 1, 0, 0]);
+                    } else if (arr[i][1] === 'Performed assisted') {
+                        category.push([arr[i][0], 0, 1, 0]);
+                    } else {
+                        category.push([arr[i][0], 0, 0, 1]);
+                    }
+
+                } else {
+
+                    if (arr[i][1] === 'Observed') {
+
+                        category[category.length - 1][1]++;
+                    } else if (arr[i][1] === 'Performed assisted') {
+
+                        category[category.length - 1][2]++;
+                    } else {
+
+                        category[category.length - 1][3]++;
+                    }
+                }
+                prev = arr[i][0];
+            }
+
+            return category;
+        }
+
+        /**
+         * Parse the examination hours data to the format that can be applied to google chart api
+         */
+        function getClinicalHoursChartData(arr, type) {
+            var hoursData = [['Type', 'Hours']]
+
+            // sum clinical log hours if the page type is clinical hours total
+            if (type === 'clinicalHoursTotal') {
+                var num = 0;
+                for (var i = 0; i < arr.length; i++) {
+                    num += Number(arr[i][0])
+                }
+                hoursData.push(['Total', num])
+            }
+            // sum clinical log hours then categorize by month if the page type is clinical hours month
+            else {
+                arr.sort()
+                var prev;
+                for (var j = 0; j < arr.length; j++) {
+                    var date = arr[j][0].split('-', 2);
+                    var month = date[0] + "-" + date[1];
+                    var hours = Number(arr[j][1])
+                    if (month !== prev) {
+                        hoursData.push([month, hours])
+                    } else {
+                        hoursData[hoursData.length - 1][1] += hours;
+                    }
+                    prev = month;
+                }
+            }
+            return hoursData
+
+        }
+
+
+        /**
+         * draw data ( one chart and one table)
+         */
+        function drawData(chartData, type, modality) {
+            $('#clinicalChartContainer').show();
+            drawChart(chartData, type, modality);
+            drawTable(chartData)
+        }
+
+
+        // draw charts using google chart api
+        function drawChart(chartData, type, color) {
+            //get chart title by different chart type
+            var title = getChartTitle(type);
+            var data = google.visualization.arrayToDataTable(chartData);
+            //set the chart style
+            var ColumnChart_options = {
+                title: title,
+                width: '1000px',
+                height: '100%',
+                bar: {groupWidth: "70%"},
+                legend: {position: 'top', maxLines: 3},
+                isStacked: true,
+                series: {
+                    0: {color: color},
+                    1: {color: 'orange'},
+                    2: {color: 'green'}
+                }
+            };
+
+            var columnChart = new google.visualization.ColumnChart(document.getElementById(type));
+            columnChart.draw(data, ColumnChart_options);
+
+        }
+
+        /**
+         * draw tables
+         */
+        function drawTable(chartData) {
+
+            var headContent = '';
+            var bodyContent = '';
+            //get rows and columns of the table content
+            $.each(chartData, function (i, x) {
+
+                if (i === 0) {
+                    for (var m = 0; m < x.length; m++) {
+                        headContent += '<th scope="col">' + x[m] + '</th>';
+                    }
+                } else {
+                    var bodyItem = '<tr><th scope="row">' + x[0] + '</th>';
+                    for (var l = 1; l < x.length; l++) {
+                        bodyItem += '<td>' + x[l] + '</td>'
+
+                    }
+                    bodyItem += '</tr>';
+                    bodyContent += bodyItem;
+                }
+
+            });
+
+            // append rows and columns to tha page
+            $("#clinicalTableHead").append(headContent);
+            $("#clinicalTableBody").append(bodyContent);
+            $('#errorContainer').css('height', 'auto')
+        }
+
+
+
+        /**
+         * get chart title by different page
+         */
+        function getChartTitle(type) {
+            switch (type) {
+                case 'clinicalExaminationsTotal':
+                    return 'Examinations'
+                case 'clinicalExaminationsCategory':
+                    return 'Examinations(by category)'
+                case 'clinicalExaminationsSubcategory':
+                    return 'Examinations(by sub-category)'
+                case 'clinicalHoursTotal':
+                    return 'Total Clinical Hours'
+                case 'clinicalHoursMonth':
+                    return 'Clinical Hours(by Month)'
+                case 'clinicalHoursWeek':
+                    return 'Clinical Hours(by Week)'
+            }
+
+        }
+
+        /**
+         * get color by modality
+         */
+        function getModalityColor(modality) {
+            switch (modality) {
+                case 'MRI':
+                    return '#2E4E8E';
+                case 'Ultrasound':
+                    return '#309A1C';
+                case 'Mammography':
+                    return '#BF7CA0';
+                case 'Nuclear Medicine':
+                    return '#F7E74C';
+                default:
+                    return 'red'
+            }
+
+
+        }
+
+
+
 
     script(async='', defer='', src='https://apis.google.com/js/api.js', onload='this.onload=function(){};handleClientLoad()', onreadystatechange="if (this.readyState === 'complete') this.onload()")
     script(src='vendor/jquery/jquery.min.js')
