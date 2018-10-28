@@ -139,7 +139,9 @@ html
 
                     getUserInfo(upiResp, function (data) {
                         let array = data.toString().split("\n");
+                        
                         for (let i in array) {
+
                             let arrayItem = array[i].split(',');
                             //find the user's info in the database
                             if (arrayItem[0] === upiResp) {
@@ -157,6 +159,7 @@ html
                                 break;
                             }
                         }
+
 
                         if(!result){
                             showAlert("No user in database")
